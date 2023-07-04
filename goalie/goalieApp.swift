@@ -4,7 +4,8 @@ import SwiftUI
 struct goalieApp: App {
     var body: some Scene {
         Window("Goalie", id: "main") {
-            ContentView()
+            // TODO: real store setup
+            ContentView(store: .init(topic: .init(id: .init(), sessions: .init(), goals: .init()), save: { _ in }))
         }
     }
 }
