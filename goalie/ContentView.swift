@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  goalie
-//
-//  Created by Christopher Trott on 7/4/23.
-//
-
 import SwiftUI
 
 struct ContentView: View {
