@@ -3,7 +3,7 @@ import SwiftUI
 @main
 struct goalieApp: App {
     var body: some Scene {
-        WindowGroup {
+        Window("Goalie", id: "main") {
             ContentView()
         }
     }
