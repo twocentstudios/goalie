@@ -14,6 +14,10 @@
 		34DF865A2A54220C00AD242B /* goalieTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86592A54220C00AD242B /* goalieTests.swift */; };
 		34DF86642A54220C00AD242B /* goalieUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86632A54220C00AD242B /* goalieUITests.swift */; };
 		34DF86662A54220C00AD242B /* goalieUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86652A54220C00AD242B /* goalieUITestsLaunchTests.swift */; };
+		34DF86742A5438CB00AD242B /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 34DF86732A5438CB00AD242B /* SwiftUINavigation */; };
+		34DF86762A5438CB00AD242B /* SwiftUINavigationCore in Frameworks */ = {isa = PBXBuildFile; productRef = 34DF86752A5438CB00AD242B /* SwiftUINavigationCore */; };
+		34DF86792A5438EB00AD242B /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = 34DF86782A5438EB00AD242B /* Dependencies */; };
+		34DF867C2A54390800AD242B /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 34DF867B2A54390800AD242B /* IdentifiedCollections */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +56,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34DF86792A5438EB00AD242B /* Dependencies in Frameworks */,
+				34DF867C2A54390800AD242B /* IdentifiedCollections in Frameworks */,
+				34DF86742A5438CB00AD242B /* SwiftUINavigation in Frameworks */,
+				34DF86762A5438CB00AD242B /* SwiftUINavigationCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,6 +153,12 @@
 			dependencies = (
 			);
 			name = goalie;
+			packageProductDependencies = (
+				34DF86732A5438CB00AD242B /* SwiftUINavigation */,
+				34DF86752A5438CB00AD242B /* SwiftUINavigationCore */,
+				34DF86782A5438EB00AD242B /* Dependencies */,
+				34DF867B2A54390800AD242B /* IdentifiedCollections */,
+			);
 			productName = goalie;
 			productReference = 34DF86442A54220B00AD242B /* goalie.app */;
 			productType = "com.apple.product-type.application";
@@ -217,6 +231,11 @@
 				Base,
 			);
 			mainGroup = 34DF863B2A54220B00AD242B;
+			packageReferences = (
+				34DF86722A5438CB00AD242B /* XCRemoteSwiftPackageReference "swiftui-navigation" */,
+				34DF86772A5438EB00AD242B /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+				34DF867A2A54390800AD242B /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
+			);
 			productRefGroup = 34DF86452A54220B00AD242B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -612,6 +631,56 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		34DF86722A5438CB00AD242B /* XCRemoteSwiftPackageReference "swiftui-navigation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swiftui-navigation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.8.0;
+			};
+		};
+		34DF86772A5438EB00AD242B /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-dependencies.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.1;
+			};
+		};
+		34DF867A2A54390800AD242B /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-identified-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.8.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		34DF86732A5438CB00AD242B /* SwiftUINavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34DF86722A5438CB00AD242B /* XCRemoteSwiftPackageReference "swiftui-navigation" */;
+			productName = SwiftUINavigation;
+		};
+		34DF86752A5438CB00AD242B /* SwiftUINavigationCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34DF86722A5438CB00AD242B /* XCRemoteSwiftPackageReference "swiftui-navigation" */;
+			productName = SwiftUINavigationCore;
+		};
+		34DF86782A5438EB00AD242B /* Dependencies */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34DF86772A5438EB00AD242B /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = Dependencies;
+		};
+		34DF867B2A54390800AD242B /* IdentifiedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34DF867A2A54390800AD242B /* XCRemoteSwiftPackageReference "swift-identified-collections" */;
+			productName = IdentifiedCollections;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 34DF863C2A54220B00AD242B /* Project object */;
 }
