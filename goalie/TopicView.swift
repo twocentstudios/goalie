@@ -80,13 +80,13 @@ final class TopicStore: ObservableObject {
     func showGoalAdd() {
         destination = .goalAdd(topic.currentGoal?.duration ?? 0)
     }
-    
+
     func addGoal(_ newGoal: TimeInterval?) {
         if topic.currentGoal?.duration == newGoal {
             // goal hasn't changed, do nothing
             return
         }
-        
+
         topic.goals.append(.init(id: uuid(), start: now, duration: newGoal))
     }
 
