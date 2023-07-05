@@ -33,27 +33,24 @@ final class TopicStore: ObservableObject {
     @Dependency(\.date.now) var now
     @Dependency(\.uuid) var uuid
     @Dependency(\.calendar) var calendar
+    @Dependency(\.mainRunLoop) var mainRunLoop
 
     @Published var topic: Topic
     @Published var startOfToday: Date!
 
     private var save: (Topic) -> Void
-    private var timerCancellable: AnyCancellable?
+    private var timerCancellable: Cancellable?
 
     init(topic: Topic, save: @escaping ((Topic) -> Void)) {
         self.topic = topic
         self.save = save
-        self.startOfToday = calendar.startOfDay(for: now)
+        startOfToday = calendar.startOfDay(for: now)
 
-        // Check every N minutes whether the current date changed.
-        let dayChangedCheckTimeInterval: TimeInterval = 60 * 5
-        timerCancellable = Timer.publish(every: dayChangedCheckTimeInterval, on: .main, in: .default)
-            .autoconnect()
-            .map { [calendar] now in calendar.startOfDay(for: now) }
-            .removeDuplicates()
-            .sink(receiveValue: { [weak self] startOfToday in
-                self?.startOfToday = startOfToday
-            })
+        let approximateOneDayInterval: TimeInterval = 60 * 60 * 24
+        timerCancellable = mainRunLoop.schedule(after: .init(calendar.startOfDay(for: now.addingTimeInterval(approximateOneDayInterval))), interval: .seconds(approximateOneDayInterval), tolerance: .seconds(1)) { [weak self] in
+            guard let self else { return }
+            self.startOfToday = calendar.startOfDay(for: self.now)
+        }
     }
 
     func startStop() {
