@@ -1,4 +1,5 @@
 import Combine
+import CustomDump
 import Dependencies
 import IdentifiedCollections
 import SwiftUI
@@ -39,6 +40,7 @@ final class TopicStore: ObservableObject {
     @Published var topic: Topic {
         didSet {
             save(topic)
+            customDump(topic)
         }
     }
     @Published var startOfToday: Date!
