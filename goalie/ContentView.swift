@@ -5,9 +5,9 @@ import SwiftUI
 
 struct Topic: Equatable, Identifiable {
     let id: UUID
-    var activeSessionStart: Date?
-    var sessions: IdentifiedArrayOf<Session>
-    var goals: IdentifiedArrayOf<Goal>
+    var activeSessionStart: Date? // non-nil when a session is active
+    var sessions: IdentifiedArrayOf<Session> // assume sorted past to future
+    var goals: IdentifiedArrayOf<Goal> // assume sorted past to future
 }
 
 struct Session: Equatable, Identifiable {
