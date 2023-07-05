@@ -18,6 +18,7 @@
 		34DF86762A5438CB00AD242B /* SwiftUINavigationCore in Frameworks */ = {isa = PBXBuildFile; productRef = 34DF86752A5438CB00AD242B /* SwiftUINavigationCore */; };
 		34DF86792A5438EB00AD242B /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = 34DF86782A5438EB00AD242B /* Dependencies */; };
 		34DF867C2A54390800AD242B /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 34DF867B2A54390800AD242B /* IdentifiedCollections */; };
+		34DF867E2A55342100AD242B /* GoalAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF867D2A55342100AD242B /* GoalAddView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		34DF865F2A54220C00AD242B /* goalieUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = goalieUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		34DF86632A54220C00AD242B /* goalieUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = goalieUITests.swift; sourceTree = "<group>"; };
 		34DF86652A54220C00AD242B /* goalieUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = goalieUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		34DF867D2A55342100AD242B /* GoalAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalAddView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +107,7 @@
 			children = (
 				34DF86472A54220B00AD242B /* goalieApp.swift */,
 				34DF86492A54220B00AD242B /* TopicView.swift */,
+				34DF867D2A55342100AD242B /* GoalAddView.swift */,
 				34DF864B2A54220C00AD242B /* Assets.xcassets */,
 				34DF864D2A54220C00AD242B /* goalie.entitlements */,
 				34DF864E2A54220C00AD242B /* Preview Content */,
@@ -280,6 +283,7 @@
 			files = (
 				34DF864A2A54220B00AD242B /* TopicView.swift in Sources */,
 				34DF86482A54220B00AD242B /* goalieApp.swift in Sources */,
+				34DF867E2A55342100AD242B /* GoalAddView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
