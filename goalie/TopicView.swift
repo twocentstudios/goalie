@@ -112,31 +112,48 @@ extension Topic {
         }
 
         var matchingTimeIntervals: [TimeInterval] = [activeInterval]
+        for session in Self.sessionsBetween(start: start, end: end, from: sessions) {
+            // Ensure session.start interval before the `start` date is not counted.
+            var validatedStart = session.start
+            if session.start < start {
+                validatedStart = start
+            }
+
+            // Ensure session.end interval before the `end` date is not counted.
+            var validatedEnd = session.end
+            if session.end > end {
+                validatedEnd = end
+            }
+
+            let validatedTimeInterval = validatedEnd.timeIntervalSince(validatedStart)
+            matchingTimeIntervals.append(validatedTimeInterval)
+        }
+
+        let totalInterval = matchingTimeIntervals.reduce(0, +)
+        return totalInterval
+    }
+
+    /// Includes `activeSession` if there is one currently running and not yet complete.
+    func sessionCountBetween(start: Date, end: Date) -> Int {
+        let matchingSessionsCount = Self.sessionsBetween(start: start, end: end, from: sessions).count
+        let activeSessionCount = activeSessionStart != nil ? 1 : 0
+        let totalCount = matchingSessionsCount + activeSessionCount
+        return totalCount
+    }
+
+    /// Assumes `from` sessions are sorted.
+    static func sessionsBetween(start: Date, end: Date, from sessions: IdentifiedArrayOf<Session>) -> IdentifiedArrayOf<Session> {
+        var matchingSessions: IdentifiedArrayOf<Session> = []
         for session in sessions.reversed() {
             if (start ... end).contains(session.start) || (start ... end).contains(session.end) {
-                // Ensure session.start interval before the `start` date is not counted.
-                var validatedStart = session.start
-                if session.start < start {
-                    validatedStart = start
-                }
-
-                // Ensure session.end interval before the `end` date is not counted.
-                var validatedEnd = session.end
-                if session.end > end {
-                    validatedEnd = end
-                }
-
-                let validatedTimeInterval = validatedEnd.timeIntervalSince(validatedStart)
-                matchingTimeIntervals.append(validatedTimeInterval)
-            } else if !matchingTimeIntervals.isEmpty {
+                matchingSessions.append(session)
+            } else if !matchingSessions.isEmpty {
                 // For performance, assume sessions array is sorted.
                 // If we've passed the relevant block of dates, then assume no more dates will match.
                 break
             }
         }
-
-        let totalInterval = matchingTimeIntervals.reduce(0, +)
-        return totalInterval
+        return matchingSessions
     }
 }
 
@@ -180,8 +197,8 @@ struct TopicViewData {
         }
     }
 
-    var sessionCountTitle: AttributedString {
-        (try? .init(markdown: "**3** sessions today")) ?? .init()
+    func sessionCountTitle(start: Date, end: Date) -> AttributedString {
+        (try? .init(markdown: "**\(topic.sessionCountBetween(start: start, end: end))** sessions today")) ?? .init()
     }
 }
 
@@ -216,37 +233,37 @@ struct TopicView: View {
                     }
                     .buttonStyle(.plain)
                 }
-            }
-            Spacer().frame(height: 16)
-            Button {
-                store.startStop()
-            } label: {
-                Text(viewData.startStopButtonTitle)
-                    .font(.title2)
-                    .bold()
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(LinearGradient(colors: [Color.blue, Color.blue.opacity(0.8)], startPoint: .top, endPoint: .bottom))
-                    }
-            }
-            .buttonStyle(.plain)
-
-            Spacer().frame(height: 10)
-
-            Button {
-                // TODO: edit goal
-            } label: {
-                HStack(spacing: 2) {
-                    Text(viewData.sessionCountTitle)
-                        .font(.subheadline)
-                        .foregroundColor(Color(.secondaryLabelColor))
-                    Image(systemName: "square.and.pencil")
+                Spacer().frame(height: 16)
+                Button {
+                    store.startStop()
+                } label: {
+                    Text(viewData.startStopButtonTitle)
+                        .font(.title2)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(LinearGradient(colors: [Color.blue, Color.blue.opacity(0.8)], startPoint: .top, endPoint: .bottom))
+                        }
                 }
-                .foregroundColor(Color(.tertiaryLabelColor))
+                .buttonStyle(.plain)
+
+                Spacer().frame(height: 10)
+
+                Button {
+                    // TODO: edit sessions
+                } label: {
+                    HStack(spacing: 2) {
+                        Text(viewData.sessionCountTitle(start: store.startOfToday, end: timeline.date))
+                            .font(.subheadline)
+                            .foregroundColor(Color(.secondaryLabelColor))
+                        Image(systemName: "square.and.pencil")
+                    }
+                    .foregroundColor(Color(.tertiaryLabelColor))
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
         .padding()
         .frame(maxWidth: 300)
