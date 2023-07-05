@@ -5,6 +5,7 @@ struct goalieApp: App {
     var body: some Scene {
         Window("Goalie", id: "main") {
             // TODO: real store setup
+            // TODO: saving/loading
             ContentView(store: .init(topic: .init(id: .init(), sessions: .init(), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
         }
     }

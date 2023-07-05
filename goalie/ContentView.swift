@@ -35,7 +35,11 @@ final class TopicStore: ObservableObject {
     @Dependency(\.calendar) var calendar
     @Dependency(\.mainRunLoop) var mainRunLoop
 
-    @Published var topic: Topic
+    @Published var topic: Topic {
+        didSet {
+            save(topic)
+        }
+    }
     @Published var startOfToday: Date!
 
     private var save: (Topic) -> Void
