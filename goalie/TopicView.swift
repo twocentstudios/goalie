@@ -45,7 +45,7 @@ final class TopicStore: ObservableObject {
     @Published var destination: Destination?
 
     enum Destination {
-        case setGoal(TimeInterval) // the current goal as the initial value. nil => 0
+        case goalAdd(TimeInterval?) // the current goal as the initial value
     }
 
     private var save: (Topic) -> Void
@@ -78,17 +78,16 @@ final class TopicStore: ObservableObject {
     }
 
     func showGoalAdd() {
-        destination = .setGoal(topic.currentGoal?.duration ?? 0)
+        destination = .goalAdd(topic.currentGoal?.duration ?? 0)
     }
     
-    func addGoal(_ newGoal: TimeInterval) {
-        let validatedNewGoal: TimeInterval? = newGoal == 0 ? nil : newGoal
-        if topic.currentGoal?.duration == validatedNewGoal {
+    func addGoal(_ newGoal: TimeInterval?) {
+        if topic.currentGoal?.duration == newGoal {
             // goal hasn't changed, do nothing
             return
         }
         
-        topic.goals.append(.init(id: uuid(), start: now, duration: validatedNewGoal))
+        topic.goals.append(.init(id: uuid(), start: now, duration: newGoal))
     }
 
     func editSessions() {}
@@ -255,9 +254,9 @@ struct TopicView: View {
         .frame(maxWidth: 300)
         .sheet(
             unwrapping: $store.destination,
-            case: /TopicStore.Destination.setGoal
+            case: /TopicStore.Destination.goalAdd
         ) { $initialGoal in
-            GoalAddView(selectedInterval: initialGoal)
+            GoalAddView(initialGoal: initialGoal)
         }
     }
 }

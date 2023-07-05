@@ -1,30 +1,59 @@
 import SwiftUI
 
 struct GoalAddView: View {
-    @State var selectedInterval: TimeInterval
+    @State var selectedStep: Double // This is actually an Int
 
-    var save: ((TimeInterval) -> Void)?
+    var save: ((TimeInterval?) -> Void)?
     @Environment(\.dismiss) private var dismiss
 
-    var intervalTitle: String {
-        if selectedInterval == 0 {
-            return "No goal"
+    init(initialGoal: TimeInterval?) {
+        _selectedStep = State(initialValue: Self.step(from: initialGoal))
+    }
+
+    private static let timeIntervalStep: Double = 60 * 5
+    private static let maxTimeInterval: Double = 60 * 60 * 12
+    private static let numberOfSteps: Double = maxTimeInterval / timeIntervalStep
+    private static func step(from timeInterval: TimeInterval?) -> Double {
+        if let timeInterval {
+            return (timeInterval / timeIntervalStep).rounded(.up)
         } else {
-            let duration = Duration.seconds(selectedInterval)
-            return duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .towardZero)))
+            return 0
+        }
+    }
+
+    private static func timeInterval(from step: Double) -> TimeInterval? {
+        let roundedStep = step.rounded(.up)
+        if roundedStep == 0 {
+            return nil
+        } else {
+            return roundedStep * timeIntervalStep
+        }
+    }
+
+    var stepTitle: String {
+        Self.title(from: selectedStep)
+    }
+
+    private static func title(from step: Double) -> String {
+        let convertedInterval = Self.timeInterval(from: step)
+        if let convertedInterval {
+            let duration = Duration.seconds(convertedInterval)
+            return duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
+        } else {
+            return "No goal"
         }
     }
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                Text(intervalTitle)
+                Text(stepTitle)
                     .font(.title)
                 Spacer().frame(height: 6)
-                Slider(value: $selectedInterval, in: 0 ... 60 * 60 * 12, step: 10 * 60) {} minimumValueLabel: {
+                Slider(value: $selectedStep, in: 0 ... Self.numberOfSteps) {} minimumValueLabel: {
                     Text("Off")
                 } maximumValueLabel: {
-                    Text("12:00:00")
+                    Text(Self.title(from: Self.numberOfSteps))
                 }
 
                 Spacer().frame(height: 16)
@@ -44,7 +73,7 @@ struct GoalAddView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        save?(selectedInterval)
+                        save?(Self.timeInterval(from: selectedStep))
                         dismiss()
                     }
                 }
@@ -56,7 +85,7 @@ struct GoalAddView: View {
 
 struct GoalAddView_Previews: PreviewProvider {
     static var previews: some View {
-        GoalAddView(selectedInterval: 0)
+        GoalAddView(initialGoal: 60*60*10)
             .frame(width: 300, height: 200, alignment: .center)
     }
 }
