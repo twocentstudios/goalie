@@ -95,7 +95,7 @@ final class TopicStore: ObservableObject {
 
 extension Topic {
     var currentGoal: Goal? {
-        goals.max(by: { $0.start > $1.start })
+        goals.max(by: { $0.start < $1.start })
     }
 
     /// Generally assumes `start` is midnight on day D.
