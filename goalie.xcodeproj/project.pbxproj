@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		34DF86482A54220B00AD242B /* goalieApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86472A54220B00AD242B /* goalieApp.swift */; };
-		34DF864A2A54220B00AD242B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86492A54220B00AD242B /* ContentView.swift */; };
+		34DF864A2A54220B00AD242B /* TopicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86492A54220B00AD242B /* TopicView.swift */; };
 		34DF864C2A54220C00AD242B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 34DF864B2A54220C00AD242B /* Assets.xcassets */; };
 		34DF86502A54220C00AD242B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 34DF864F2A54220C00AD242B /* Preview Assets.xcassets */; };
 		34DF865A2A54220C00AD242B /* goalieTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86592A54220C00AD242B /* goalieTests.swift */; };
@@ -40,7 +40,7 @@
 /* Begin PBXFileReference section */
 		34DF86442A54220B00AD242B /* goalie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = goalie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		34DF86472A54220B00AD242B /* goalieApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = goalieApp.swift; sourceTree = "<group>"; };
-		34DF86492A54220B00AD242B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		34DF86492A54220B00AD242B /* TopicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicView.swift; sourceTree = "<group>"; };
 		34DF864B2A54220C00AD242B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		34DF864D2A54220C00AD242B /* goalie.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = goalie.entitlements; sourceTree = "<group>"; };
 		34DF864F2A54220C00AD242B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -104,7 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				34DF86472A54220B00AD242B /* goalieApp.swift */,
-				34DF86492A54220B00AD242B /* ContentView.swift */,
+				34DF86492A54220B00AD242B /* TopicView.swift */,
 				34DF864B2A54220C00AD242B /* Assets.xcassets */,
 				34DF864D2A54220C00AD242B /* goalie.entitlements */,
 				34DF864E2A54220C00AD242B /* Preview Content */,
@@ -278,7 +278,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34DF864A2A54220B00AD242B /* ContentView.swift in Sources */,
+				34DF864A2A54220B00AD242B /* TopicView.swift in Sources */,
 				34DF86482A54220B00AD242B /* goalieApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

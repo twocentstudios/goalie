@@ -6,7 +6,7 @@ struct goalieApp: App {
         Window("Goalie", id: "main") {
             // TODO: real store setup
             // TODO: saving/loading
-            ContentView(store: .init(topic: .init(id: .init(), sessions: .init(), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
+            TopicView(store: .init(topic: .init(id: .init(), sessions: .init(), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
         }
     }
 }

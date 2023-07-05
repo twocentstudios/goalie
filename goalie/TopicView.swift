@@ -170,7 +170,7 @@ struct TopicViewData {
     }
 }
 
-struct ContentView: View {
+struct TopicView: View {
     @ObservedObject var store: TopicStore
 
     private var viewData: TopicViewData {
@@ -240,6 +240,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(store: .init(topic: .init(id: .init(), sessions: .init(), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
+        TopicView(store: .init(topic: .init(id: .init(), sessions: .init(), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
     }
 }
