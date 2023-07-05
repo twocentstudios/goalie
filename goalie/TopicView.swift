@@ -252,6 +252,23 @@ struct TopicView: View {
                 }
                 .buttonStyle(.plain)
 
+                // TODO: implement current session cancellation
+                if false {
+                    Spacer().frame(height: 14)
+                    HStack(spacing: 2) {
+                        Text("Current session started at 1:02pm")
+                            .font(.subheadline)
+                            .foregroundColor(Color(.secondaryLabelColor))
+                        Button {
+                            // TODO: confirm cancel session
+                        } label: {
+                            Image(systemName: "minus.circle")
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .foregroundColor(Color(.tertiaryLabelColor))
+                }
+
                 Spacer().frame(height: 10)
 
                 Button {
