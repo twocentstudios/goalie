@@ -147,14 +147,10 @@ struct TopicViewData {
         topic.activeSessionStart == nil
     }
 
-    func timerTitle(_ now: Date) -> String {
-        if let start = topic.activeSessionStart {
-            let interval = now.timeIntervalSince(start)
-            let duration = Duration.seconds(interval)
-            return duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
-        } else {
-            return "00:00:00"
-        }
+    func timerTitle(startOfDay: Date, now: Date) -> String {
+        let totalIntervalToday = topic.totalIntervalBetween(start: startOfDay, end: now)
+        let duration = Duration.seconds(totalIntervalToday)
+        return duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
     }
 
     var currentGoalTitle: String {
@@ -199,7 +195,7 @@ struct TopicView: View {
     var body: some View {
         VStack(spacing: 0) {
             TimelineView(.animation(minimumInterval: 1, paused: viewData.isTimerPaused)) { timeline in
-                Text(viewData.timerTitle(timeline.date))
+                Text(viewData.timerTitle(startOfDay: store.startOfToday, now: timeline.date))
                     .monospacedDigit()
                     .font(.largeTitle)
                 Spacer().frame(height: 2)
