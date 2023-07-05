@@ -256,7 +256,10 @@ struct TopicView: View {
             unwrapping: $store.destination,
             case: /TopicStore.Destination.goalAdd
         ) { $initialGoal in
-            GoalAddView(initialGoal: initialGoal)
+            GoalAddView(
+                initialGoal: initialGoal,
+                save: { newGoal in store.addGoal(newGoal) }
+            )
         }
     }
 }

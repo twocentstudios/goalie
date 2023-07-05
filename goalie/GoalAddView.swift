@@ -3,11 +3,12 @@ import SwiftUI
 struct GoalAddView: View {
     @State var selectedStep: Double // This is actually an Int
 
-    var save: ((TimeInterval?) -> Void)?
+    private var save: ((TimeInterval?) -> Void)?
     @Environment(\.dismiss) private var dismiss
 
-    init(initialGoal: TimeInterval?) {
+    init(initialGoal: TimeInterval?, save: ((TimeInterval?) -> Void)? = nil) {
         _selectedStep = State(initialValue: Self.step(from: initialGoal))
+        self.save = save
     }
 
     private static let timeIntervalStep: Double = 60 * 5
