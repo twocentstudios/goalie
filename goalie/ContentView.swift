@@ -1,3 +1,4 @@
+import Combine
 import Dependencies
 import IdentifiedCollections
 import SwiftUI
@@ -31,14 +32,28 @@ struct Goal: Equatable, Identifiable {
 final class TopicStore: ObservableObject {
     @Dependency(\.date.now) var now
     @Dependency(\.uuid) var uuid
+    @Dependency(\.calendar) var calendar
 
     @Published var topic: Topic
+    @Published var startOfToday: Date!
 
     private var save: (Topic) -> Void
+    private var timerCancellable: AnyCancellable?
 
     init(topic: Topic, save: @escaping ((Topic) -> Void)) {
         self.topic = topic
         self.save = save
+        self.startOfToday = calendar.startOfDay(for: now)
+
+        // Check every N minutes whether the current date changed.
+        let dayChangedCheckTimeInterval: TimeInterval = 60 * 5
+        timerCancellable = Timer.publish(every: dayChangedCheckTimeInterval, on: .main, in: .default)
+            .autoconnect()
+            .map { [calendar] now in calendar.startOfDay(for: now) }
+            .removeDuplicates()
+            .sink(receiveValue: { [weak self] startOfToday in
+                self?.startOfToday = startOfToday
+            })
     }
 
     func startStop() {
@@ -54,6 +69,51 @@ final class TopicStore: ObservableObject {
     func editGoal() {}
 
     func editSessions() {}
+}
+
+extension Topic {
+    var currentGoal: Goal? {
+        goals.max(by: { $0.start > $1.start })
+    }
+
+    /// Generally assumes `start` is midnight on day D.
+    /// If day D is earlier than today, `end` is assumed to be one second before midnight on day D.
+    /// If day D is today, `end` is assumed to be `now`.
+    func totalIntervalBetween(start: Date, end: Date) -> TimeInterval {
+        let activeInterval: TimeInterval
+        if let sessionStart = activeSessionStart {
+            activeInterval = end.timeIntervalSince(sessionStart)
+        } else {
+            activeInterval = 0
+        }
+
+        var matchingTimeIntervals: [TimeInterval] = [activeInterval]
+        for session in sessions.reversed() {
+            if (start ... end).contains(session.start) || (start ... end).contains(session.end) {
+                // Ensure session.start interval before the `start` date is not counted.
+                var validatedStart = session.start
+                if session.start < start {
+                    validatedStart = start
+                }
+
+                // Ensure session.end interval before the `end` date is not counted.
+                var validatedEnd = session.end
+                if session.end > end {
+                    validatedEnd = end
+                }
+
+                let validatedTimeInterval = validatedEnd.timeIntervalSince(validatedStart)
+                matchingTimeIntervals.append(validatedTimeInterval)
+            } else if !matchingTimeIntervals.isEmpty {
+                // For performance, assume sessions array is sorted.
+                // If we've passed the relevant block of dates, then assume no more dates will match.
+                break
+            }
+        }
+
+        let totalInterval = matchingTimeIntervals.reduce(0, +)
+        return totalInterval
+    }
 }
 
 struct TopicViewData {
@@ -74,11 +134,22 @@ struct TopicViewData {
     }
 
     var currentGoalTitle: String {
-        "--:--:--"
+        if let goalDuration = topic.currentGoal?.duration {
+            let duration = Duration.seconds(goalDuration)
+            return duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .towardZero)))
+        } else {
+            return "--:--:--"
+        }
     }
 
-    var isGoalComplete: Bool {
-        false
+    func isGoalComplete(startOfDay: Date, now: Date) -> Bool {
+        if let goalDuration = topic.currentGoal?.duration {
+            let totalIntervalToday = topic.totalIntervalBetween(start: startOfDay, end: now)
+            if totalIntervalToday >= goalDuration {
+                return true
+            }
+        }
+        return false
     }
 
     var startStopButtonTitle: String {
@@ -103,27 +174,28 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            TimelineView(.animation(minimumInterval: 1, paused: viewData.isTimerPaused)) { value in
-                Text(viewData.timerTitle(value.date))
+            TimelineView(.animation(minimumInterval: 1, paused: viewData.isTimerPaused)) { timeline in
+                Text(viewData.timerTitle(timeline.date))
                     .monospacedDigit()
                     .font(.largeTitle)
-            }
-            Spacer().frame(height: 2)
-            HStack(spacing: 4) {
-                Text(viewData.currentGoalTitle)
-                    .font(.title3)
-                    .foregroundColor(viewData.isGoalComplete ? Color.green : Color(.secondaryLabelColor))
+                Spacer().frame(height: 2)
+                HStack(spacing: 4) {
+                    Text(viewData.currentGoalTitle)
+                        .font(.title3)
+                        .foregroundColor(Color(.secondaryLabelColor))
 
-                Button {
-                    // TODO: edit goal
-                } label: {
-                    HStack(spacing: 2) {
-                        Text("Goal")
-                        Image(systemName: "square.and.pencil")
+                    Button {
+                        // TODO: edit goal
+                    } label: {
+                        HStack(spacing: 2) {
+                            Text("Goal")
+                                .foregroundColor(viewData.isGoalComplete(startOfDay: store.startOfToday, now: timeline.date) ? Color.green.opacity(0.7) : Color(.tertiaryLabelColor))
+                            Image(systemName: "square.and.pencil")
+                                .foregroundColor(Color(.tertiaryLabelColor))
+                        }
                     }
-                    .foregroundColor(Color(.tertiaryLabelColor))
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
             Spacer().frame(height: 16)
             Button {
@@ -163,6 +235,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(store: .init(topic: .init(id: .init(), sessions: .init(), goals: .init()), save: { _ in }))
+        ContentView(store: .init(topic: .init(id: .init(), sessions: .init(), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
     }
 }
