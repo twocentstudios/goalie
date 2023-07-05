@@ -2,6 +2,7 @@ import Combine
 import Dependencies
 import IdentifiedCollections
 import SwiftUI
+import SwiftUINavigation
 
 struct Topic: Equatable, Identifiable {
     let id: UUID
@@ -41,6 +42,11 @@ final class TopicStore: ObservableObject {
         }
     }
     @Published var startOfToday: Date!
+    @Published var destination: Destination?
+
+    enum Destination {
+        case setGoal(TimeInterval) // the current goal as the initial value. nil => 0
+    }
 
     private var save: (Topic) -> Void
     private var timerCancellable: Cancellable?
@@ -71,7 +77,19 @@ final class TopicStore: ObservableObject {
         }
     }
 
-    func editGoal() {}
+    func showGoalAdd() {
+        destination = .setGoal(topic.currentGoal?.duration ?? 0)
+    }
+    
+    func addGoal(_ newGoal: TimeInterval) {
+        let validatedNewGoal: TimeInterval? = newGoal == 0 ? nil : newGoal
+        if topic.currentGoal?.duration == validatedNewGoal {
+            // goal hasn't changed, do nothing
+            return
+        }
+        
+        topic.goals.append(.init(id: uuid(), start: now, duration: validatedNewGoal))
+    }
 
     func editSessions() {}
 }
@@ -190,7 +208,7 @@ struct TopicView: View {
                         .foregroundColor(Color(.secondaryLabelColor))
 
                     Button {
-                        // TODO: edit goal
+                        store.showGoalAdd()
                     } label: {
                         HStack(spacing: 2) {
                             Text("Goal")
@@ -235,6 +253,12 @@ struct TopicView: View {
         }
         .padding()
         .frame(maxWidth: 300)
+        .sheet(
+            unwrapping: $store.destination,
+            case: /TopicStore.Destination.setGoal
+        ) { $initialGoal in
+            GoalAddView(selectedInterval: initialGoal)
+        }
     }
 }
 
