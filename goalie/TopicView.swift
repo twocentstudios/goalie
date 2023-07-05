@@ -149,7 +149,7 @@ struct TopicViewData {
         if let start = topic.activeSessionStart {
             let interval = now.timeIntervalSince(start)
             let duration = Duration.seconds(interval)
-            return duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .towardZero)))
+            return duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
         } else {
             return "00:00:00"
         }
@@ -158,7 +158,7 @@ struct TopicViewData {
     var currentGoalTitle: String {
         if let goalDuration = topic.currentGoal?.duration {
             let duration = Duration.seconds(goalDuration)
-            return duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .towardZero)))
+            return duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
         } else {
             return "--:--:--"
         }
