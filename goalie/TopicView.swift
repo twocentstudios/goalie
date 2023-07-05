@@ -198,7 +198,10 @@ struct TopicViewData {
     }
 
     func sessionCountTitle(start: Date, end: Date) -> AttributedString {
-        (try? .init(markdown: "**\(topic.sessionCountBetween(start: start, end: end))** sessions today")) ?? .init()
+        let sessionsCount = topic.sessionCountBetween(start: start, end: end)
+        let unitTitle = sessionsCount == 1 ? "session" : "sessions"
+        let title: AttributedString = (try? .init(markdown: "**\(sessionsCount)** \(unitTitle) today")) ?? .init()
+        return title
     }
 }
 
