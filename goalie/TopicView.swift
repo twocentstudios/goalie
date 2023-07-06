@@ -283,11 +283,14 @@ struct TopicView: View {
                         Text(viewData.sessionCountTitle(start: store.startOfToday, end: timeline.date))
                             .font(.subheadline)
                             .foregroundColor(Color(.secondaryLabelColor))
-                        Image(systemName: "square.and.pencil")
+                        if false { // TODO: session edit support
+                            Image(systemName: "square.and.pencil")
+                        }
                     }
                     .foregroundColor(Color(.tertiaryLabelColor))
                 }
                 .buttonStyle(.plain)
+                .disabled(true) // TODO: session edit support
             }
         }
         .padding()
