@@ -4,6 +4,7 @@ import Dependencies
 import IdentifiedCollections
 import SwiftUI
 import SwiftUINavigation
+import SystemColors
 
 struct Topic: Equatable, Identifiable, Codable {
     let id: UUID
@@ -222,16 +223,16 @@ struct TopicView: View {
                 HStack(spacing: 4) {
                     Text(viewData.currentGoalTitle)
                         .font(.title3)
-                        .foregroundColor(Color(.secondaryLabelColor))
+                        .foregroundColor(Color.secondaryLabel)
 
                     Button {
                         store.showGoalAdd()
                     } label: {
                         HStack(spacing: 2) {
                             Text("Goal")
-                                .foregroundColor(viewData.isGoalComplete(startOfDay: store.startOfToday, now: timeline.date) ? Color.green.opacity(0.7) : Color(.tertiaryLabelColor))
+                                .foregroundColor(viewData.isGoalComplete(startOfDay: store.startOfToday, now: timeline.date) ? Color.green.opacity(0.7) : Color.tertiaryLabel)
                             Image(systemName: "square.and.pencil")
-                                .foregroundColor(Color(.tertiaryLabelColor))
+                                .foregroundColor(Color.tertiaryLabel)
                         }
                         .contentShape(Rectangle())
                     }
@@ -263,7 +264,7 @@ struct TopicView: View {
                     HStack(spacing: 2) {
                         Text("Current session started at 1:02pm")
                             .font(.subheadline)
-                            .foregroundColor(Color(.secondaryLabelColor))
+                            .foregroundColor(Color.secondaryLabel)
                         Button {
                             // TODO: confirm cancel session
                         } label: {
@@ -271,7 +272,7 @@ struct TopicView: View {
                         }
                         .buttonStyle(.plain)
                     }
-                    .foregroundColor(Color(.tertiaryLabelColor))
+                    .foregroundColor(Color.tertiaryLabel)
                 }
 
                 Spacer().frame(height: 10)
@@ -282,12 +283,12 @@ struct TopicView: View {
                     HStack(spacing: 2) {
                         Text(viewData.sessionCountTitle(start: store.startOfToday, end: timeline.date))
                             .font(.subheadline)
-                            .foregroundColor(Color(.secondaryLabelColor))
+                            .foregroundColor(Color.secondaryLabel)
                         if false { // TODO: session edit support
                             Image(systemName: "square.and.pencil")
                         }
                     }
-                    .foregroundColor(Color(.tertiaryLabelColor))
+                    .foregroundColor(Color.tertiaryLabel)
                 }
                 .buttonStyle(.plain)
                 .disabled(true) // TODO: session edit support

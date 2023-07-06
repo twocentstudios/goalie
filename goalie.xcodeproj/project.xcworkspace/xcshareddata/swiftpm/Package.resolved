@@ -73,6 +73,15 @@
       }
     },
     {
+      "identity" : "swiftui-system-colors",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/diniska/swiftui-system-colors",
+      "state" : {
+        "revision" : "5127afab23337699a714e036588f02d9481ae612",
+        "version" : "1.2.0"
+      }
+    },
+    {
       "identity" : "xctest-dynamic-overlay",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",

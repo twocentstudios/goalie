@@ -22,6 +22,7 @@
 		34DF86802A568E2400AD242B /* GoaliePersistenceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF867F2A568E2400AD242B /* GoaliePersistenceClient.swift */; };
 		34DF86822A56F47B00AD242B /* StoreState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86812A56F47B00AD242B /* StoreState.swift */; };
 		34DF86842A56F4A100AD242B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86832A56F4A100AD242B /* RootView.swift */; };
+		34DF86892A56FCA100AD242B /* SystemColors in Frameworks */ = {isa = PBXBuildFile; productRef = 34DF86882A56FCA100AD242B /* SystemColors */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 				34DF86792A5438EB00AD242B /* Dependencies in Frameworks */,
 				34DF867C2A54390800AD242B /* IdentifiedCollections in Frameworks */,
 				34DF86742A5438CB00AD242B /* SwiftUINavigation in Frameworks */,
+				34DF86892A56FCA100AD242B /* SystemColors in Frameworks */,
 				34DF86762A5438CB00AD242B /* SwiftUINavigationCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -170,6 +172,7 @@
 				34DF86752A5438CB00AD242B /* SwiftUINavigationCore */,
 				34DF86782A5438EB00AD242B /* Dependencies */,
 				34DF867B2A54390800AD242B /* IdentifiedCollections */,
+				34DF86882A56FCA100AD242B /* SystemColors */,
 			);
 			productName = goalie;
 			productReference = 34DF86442A54220B00AD242B /* goalie.app */;
@@ -247,6 +250,7 @@
 				34DF86722A5438CB00AD242B /* XCRemoteSwiftPackageReference "swiftui-navigation" */,
 				34DF86772A5438EB00AD242B /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				34DF867A2A54390800AD242B /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
+				34DF86872A56FCA100AD242B /* XCRemoteSwiftPackageReference "swiftui-system-colors" */,
 			);
 			productRefGroup = 34DF86452A54220B00AD242B /* Products */;
 			projectDirPath = "";
@@ -454,6 +458,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Goalie;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -492,6 +497,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Goalie;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -673,6 +679,14 @@
 				minimumVersion = 0.8.0;
 			};
 		};
+		34DF86872A56FCA100AD242B /* XCRemoteSwiftPackageReference "swiftui-system-colors" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/diniska/swiftui-system-colors";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -695,6 +709,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 34DF867A2A54390800AD242B /* XCRemoteSwiftPackageReference "swift-identified-collections" */;
 			productName = IdentifiedCollections;
+		};
+		34DF86882A56FCA100AD242B /* SystemColors */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34DF86872A56FCA100AD242B /* XCRemoteSwiftPackageReference "swiftui-system-colors" */;
+			productName = SystemColors;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

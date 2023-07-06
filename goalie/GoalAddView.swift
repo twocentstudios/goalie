@@ -1,4 +1,5 @@
 import SwiftUI
+import SystemColors
 
 struct GoalAddView: View {
     @State var selectedStep: Double // This is actually treated like an Int
@@ -61,7 +62,7 @@ struct GoalAddView: View {
                 Text("Setting a daily goal will update it for today onward (past goals will not be affected).")
                     .lineLimit(nil)
                     .font(.caption)
-                    .foregroundColor(Color(.tertiaryLabelColor))
+                    .foregroundColor(Color.tertiaryLabel)
                     .multilineTextAlignment(.leading)
             }
             .padding()
