@@ -41,7 +41,7 @@ final class TopicStore: ObservableObject {
     @Published var topic: Topic {
         didSet {
             save(topic)
-            customDump(topic)
+            // customDump(topic)
         }
     }
     @Published var startOfToday: Date!
