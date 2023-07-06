@@ -58,7 +58,9 @@ extension GoaliePersistenceClient {
     init(rootDirectory: URL) {
         let fileStorageClient = FileStorageClient(rootDirectory: rootDirectory)
         let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
         let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
         writeTopic = { topic throws in
             let data = try encoder.encode(topic)
             let path = Self.path(for: topic.id)
