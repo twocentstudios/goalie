@@ -244,8 +244,8 @@ struct TopicView: View {
                         .font(.title2)
                         .bold()
                         .foregroundColor(.white)
+                        .padding(.vertical, 14)
                         .frame(maxWidth: .infinity)
-                        .padding()
                         .background {
                             Color.black
                                 .overlay {
