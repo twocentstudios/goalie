@@ -65,7 +65,7 @@ struct GoalAddView: View {
                     .multilineTextAlignment(.leading)
             }
             .padding()
-            .frame(minHeight: 200, maxHeight: .infinity)
+            .frame(minHeight: 200, maxHeight: 200)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", role: .cancel) {
@@ -81,12 +81,12 @@ struct GoalAddView: View {
             }
             .navigationTitle("Set Goal")
         }
+        .frame(minWidth: 200, maxWidth: 290)
     }
 }
 
 struct GoalAddView_Previews: PreviewProvider {
     static var previews: some View {
-        GoalAddView(initialGoal: 60*60*10)
-            .frame(width: 300, height: 200, alignment: .center)
+        GoalAddView(initialGoal: 60 * 60 * 10)
     }
 }
