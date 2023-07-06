@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct GoalAddView: View {
-    @State var selectedStep: Double // This is actually an Int
+    @State var selectedStep: Double // This is actually treated like an Int
 
-    private var save: ((TimeInterval?) -> Void)?
+    private let save: ((TimeInterval?) -> Void)?
     @Environment(\.dismiss) private var dismiss
 
     init(initialGoal: TimeInterval?, save: ((TimeInterval?) -> Void)? = nil) {
@@ -31,7 +31,7 @@ struct GoalAddView: View {
         }
     }
 
-    var stepTitle: String {
+    private var stepTitle: String {
         Self.title(from: selectedStep)
     }
 
