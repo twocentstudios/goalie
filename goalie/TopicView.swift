@@ -252,7 +252,7 @@ struct TopicView: View {
                         .background {
                             Color.black
                                 .overlay {
-                                    LinearGradient(colors: [Color.blue, Color.blue.opacity(0.8)], startPoint: .top, endPoint: .bottom)
+                                    LinearGradient(colors: [Color.accentColor, Color.accentColor.opacity(0.8)], startPoint: .top, endPoint: .bottom)
                                 }
                                 .cornerRadius(10)
                         }
