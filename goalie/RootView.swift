@@ -47,9 +47,6 @@ final class RootStore: ObservableObject {
 
     // TODO: how to make this async?
     private func loadTopic() {
-        // NEXT: currently, only one hardcoded topic is supported. In the future, this should load the last opened topic ID from UserDefaults.
-        let onlyTopicId = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
-
         let save: ((Topic) -> Void) = { [persistenceClient] t in
             do {
                 try persistenceClient.writeTopic(t)
@@ -61,11 +58,11 @@ final class RootStore: ObservableObject {
         guard let nextState = topicStoreState.stateByLoading else { return }
         topicStoreState = nextState
         do {
-            guard let topic = try persistenceClient.readTopic(onlyTopicId) else { throw CocoaError(.fileReadNoSuchFile) }
+            guard let topic = try persistenceClient.readTopic(Topic.new.id) else { throw CocoaError(.fileReadNoSuchFile) }
             let topicStore = TopicStore(topic: topic, save: save)
             topicStoreState = .loaded(topicStore)
         } catch CocoaError.fileReadNoSuchFile {
-            let newTopic = Topic(id: onlyTopicId, activeSessionStart: nil, sessions: .init(), goals: .init())
+            let newTopic = Topic.new
             let topicStore = TopicStore(topic: newTopic, save: save)
             topicStoreState = .loaded(topicStore)
         } catch {

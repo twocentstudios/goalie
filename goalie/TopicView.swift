@@ -13,6 +13,14 @@ struct Topic: Equatable, Identifiable, Codable {
     var goals: IdentifiedArrayOf<Goal> // assume sorted past to future
 }
 
+extension Topic {
+    static var new: Self {
+        // NEXT: currently, only one hardcoded topic is supported. In the future, this should load the last opened topic ID from UserDefaults.
+        let onlyTopicId = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
+        return Topic(id: onlyTopicId, activeSessionStart: nil, sessions: .init(), goals: .init())
+    }
+}
+
 struct Session: Equatable, Identifiable, Codable {
     let id: UUID
     let start: Date
@@ -95,6 +103,10 @@ final class TopicStore: ObservableObject {
     }
 
     func editSessions() {}
+    
+    func debugResetTopic() {
+        topic = Topic.new
+    }
 }
 
 extension Topic {
@@ -220,6 +232,10 @@ struct TopicView: View {
                 Text(viewData.timerTitle(startOfDay: store.startOfToday, now: timeline.date))
                     .monospacedDigit()
                     .font(.largeTitle)
+                    .onTapGesture(count: 10) {
+                        // TODO: debug only
+                        store.debugResetTopic()
+                    }
                 Spacer().frame(height: 2)
                 HStack(spacing: 4) {
                     Text(viewData.currentGoalTitle)
