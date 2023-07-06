@@ -59,6 +59,7 @@ final class TopicStore: ObservableObject {
         self.save = save
         startOfToday = calendar.startOfDay(for: now)
 
+        // TODO: This crashes?
         let approximateOneDayInterval: TimeInterval = 60 * 60 * 24
         timerCancellable = mainRunLoop.schedule(
             after: .init(calendar.startOfDay(for: now.addingTimeInterval(approximateOneDayInterval))),
