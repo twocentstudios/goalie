@@ -243,11 +243,15 @@ struct TopicView: View {
                     Text(viewData.startStopButtonTitle)
                         .font(.title2)
                         .bold()
+                        .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(LinearGradient(colors: [Color.blue, Color.blue.opacity(0.8)], startPoint: .top, endPoint: .bottom))
+                            Color.black
+                                .overlay {
+                                    LinearGradient(colors: [Color.blue, Color.blue.opacity(0.8)], startPoint: .top, endPoint: .bottom)
+                                }
+                                .cornerRadius(10)
                         }
                 }
                 .buttonStyle(.plain)
