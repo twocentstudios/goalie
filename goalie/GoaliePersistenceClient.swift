@@ -50,8 +50,9 @@ extension FileStorageClient {
 }
 
 extension GoaliePersistenceClient {
+    private static let basePathComponent: String = "topics"
     private static func path(for topicId: UUID) -> String {
-        "topics/\(topicId).json"
+        "\(basePathComponent)/\(topicId).json"
     }
 
     init(rootDirectory: URL) {
