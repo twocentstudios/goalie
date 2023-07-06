@@ -5,14 +5,14 @@ import IdentifiedCollections
 import SwiftUI
 import SwiftUINavigation
 
-struct Topic: Equatable, Identifiable {
+struct Topic: Equatable, Identifiable, Codable {
     let id: UUID
     var activeSessionStart: Date? // non-nil when a session is active
     var sessions: IdentifiedArrayOf<Session> // assume sorted past to future
     var goals: IdentifiedArrayOf<Goal> // assume sorted past to future
 }
 
-struct Session: Equatable, Identifiable {
+struct Session: Equatable, Identifiable, Codable {
     let id: UUID
     let start: Date
     let end: Date
@@ -25,7 +25,7 @@ struct Session: Equatable, Identifiable {
     }
 }
 
-struct Goal: Equatable, Identifiable {
+struct Goal: Equatable, Identifiable, Codable {
     let id: UUID
     let start: Date
     let duration: TimeInterval? // nil intentionally unsets a goal
