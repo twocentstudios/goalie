@@ -2,11 +2,11 @@ import SwiftUI
 
 @main
 struct goalieApp: App {
+    @StateObject var rootStore: RootStore = .init()
+
     var body: some Scene {
         Window("Goalie", id: "main") {
-            // TODO: real store setup
-            // TODO: saving/loading
-            TopicView(store: .init(topic: .init(id: .init(), sessions: .init(), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
+            RootView(store: rootStore)
         }
     }
 }

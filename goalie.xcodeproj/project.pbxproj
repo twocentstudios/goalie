@@ -21,6 +21,7 @@
 		34DF867E2A55342100AD242B /* GoalAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF867D2A55342100AD242B /* GoalAddView.swift */; };
 		34DF86802A568E2400AD242B /* GoaliePersistenceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF867F2A568E2400AD242B /* GoaliePersistenceClient.swift */; };
 		34DF86822A56F47B00AD242B /* StoreState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86812A56F47B00AD242B /* StoreState.swift */; };
+		34DF86842A56F4A100AD242B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86832A56F4A100AD242B /* RootView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 		34DF867D2A55342100AD242B /* GoalAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalAddView.swift; sourceTree = "<group>"; };
 		34DF867F2A568E2400AD242B /* GoaliePersistenceClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoaliePersistenceClient.swift; sourceTree = "<group>"; };
 		34DF86812A56F47B00AD242B /* StoreState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreState.swift; sourceTree = "<group>"; };
+		34DF86832A56F4A100AD242B /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				34DF86472A54220B00AD242B /* goalieApp.swift */,
+				34DF86832A56F4A100AD242B /* RootView.swift */,
 				34DF86492A54220B00AD242B /* TopicView.swift */,
 				34DF867D2A55342100AD242B /* GoalAddView.swift */,
 				34DF867F2A568E2400AD242B /* GoaliePersistenceClient.swift */,
@@ -289,6 +292,7 @@
 			files = (
 				34DF86822A56F47B00AD242B /* StoreState.swift in Sources */,
 				34DF864A2A54220B00AD242B /* TopicView.swift in Sources */,
+				34DF86842A56F4A100AD242B /* RootView.swift in Sources */,
 				34DF86482A54220B00AD242B /* goalieApp.swift in Sources */,
 				34DF86802A568E2400AD242B /* GoaliePersistenceClient.swift in Sources */,
 				34DF867E2A55342100AD242B /* GoalAddView.swift in Sources */,
