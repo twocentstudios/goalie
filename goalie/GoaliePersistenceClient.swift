@@ -32,6 +32,9 @@ extension FileStorageClient {
     init(rootDirectory: URL) {
         writeData = { data, path throws in
             let fileURL = rootDirectory.appending(path: path, directoryHint: .notDirectory)
+            // Create a directory for the supplied fileURL if necessary.
+            let directory = fileURL.deletingLastPathComponent()
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             try data.write(to: fileURL)
         }
         readData = { path throws -> Data? in
