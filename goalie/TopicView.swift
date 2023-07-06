@@ -233,6 +233,7 @@ struct TopicView: View {
                             Image(systemName: "square.and.pencil")
                                 .foregroundColor(Color(.tertiaryLabelColor))
                         }
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
