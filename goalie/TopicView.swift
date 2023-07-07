@@ -58,10 +58,12 @@ final class TopicStore: ObservableObject {
     enum Destination {
         case goalAdd(TimeInterval?) // the current goal as the initial value
         case confirmingCancelCurrentSession(AlertState<AlertAction>)
+        case confirmingDeleteSession(AlertState<AlertAction>)
     }
 
     enum AlertAction {
         case cancelCurrentSession
+        case deleteSession(UUID)
     }
 
     private var save: (Topic) -> Void
@@ -129,7 +131,25 @@ final class TopicStore: ObservableObject {
         }
     }
 
-    func deleteSessionButtonTapped(_ sessionID: UUID) {}
+    func deleteSessionButtonTapped(_ sessionID: UUID) {
+        guard destination == nil else {
+            assertionFailure("Unexpected state: destination is already set")
+            return
+        }
+
+        destination = .confirmingDeleteSession(
+            AlertState {
+                TextState("Are you sure you want to the delete this session?")
+            } actions: {
+                ButtonState(role: .destructive, action: .send(.deleteSession(sessionID))) {
+                    TextState("Delete Session")
+                }
+                ButtonState(role: .cancel, action: .send(nil)) {
+                    TextState("Cancel")
+                }
+            }
+        )
+    }
 
     func alertButtonTapped(_ action: AlertAction?) {
         switch action {
@@ -137,6 +157,8 @@ final class TopicStore: ObservableObject {
             break
         case .cancelCurrentSession:
             topic.activeSessionStart = nil
+        case let .deleteSession(id):
+            topic.sessions.remove(id: id)
         }
     }
 
@@ -413,6 +435,9 @@ struct TopicView: View {
                                 }
                                 .foregroundColor(Color.secondaryLabel)
                                 .buttonStyle(.plain)
+                                .alert(unwrapping: $store.destination, case: /TopicStore.Destination.confirmingDeleteSession) { action in
+                                    store.alertButtonTapped(action)
+                                }
 
                                 Text(row.start)
                                     .monospacedDigit()
