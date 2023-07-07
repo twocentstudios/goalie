@@ -407,7 +407,7 @@ struct TopicView: View {
                                 Button {
                                     store.cancelCurrentSessionButtonTapped()
                                 } label: {
-                                    Image(systemName: "minus.circle")
+                                    Image(systemName: "xmark.circle")
                                         .padding(5)
                                 }
                                 .foregroundColor(Color.secondaryLabel)
@@ -427,7 +427,7 @@ struct TopicView: View {
                                 Button {
                                     store.deleteSessionButtonTapped(row.id)
                                 } label: {
-                                    Image(systemName: "minus.circle")
+                                    Image(systemName: "xmark.circle")
                                         .padding(5)
                                 }
                                 .foregroundColor(Color.secondaryLabel)
