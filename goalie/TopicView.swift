@@ -396,9 +396,6 @@ struct TopicView: View {
                         .foregroundColor(isShowingTodaysSessions ? Color.label : Color.secondaryLabel)
                     }
                     .buttonStyle(.plain)
-                    .alert(unwrapping: $store.destination, case: /TopicStore.Destination.confirmingCancelCurrentSession) { action in
-                        store.alertButtonTapped(action)
-                    }
                 }
 
                 if isShowingTodaysSessions {
@@ -415,6 +412,9 @@ struct TopicView: View {
                                 }
                                 .foregroundColor(Color.secondaryLabel)
                                 .buttonStyle(.plain)
+                                .alert(unwrapping: $store.destination, case: /TopicStore.Destination.confirmingCancelCurrentSession) { action in
+                                    store.alertButtonTapped(action)
+                                }
 
                                 Text(activeSessionRow.start)
                                     .monospacedDigit()
