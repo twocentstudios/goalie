@@ -208,6 +208,12 @@ extension Topic {
 }
 
 struct TopicViewData {
+    struct SessionRow: Equatable, Identifiable {
+        let id: UUID
+        let start: String
+        let duration: String
+    }
+
     let topic: Topic
 
     var isTimerPaused: Bool {
@@ -247,11 +253,15 @@ struct TopicViewData {
         }
     }
 
-    func sessionCountTitle(start: Date, end: Date) -> AttributedString {
+    func sessionCountTitle(start: Date, end: Date) -> AttributedString? {
         let sessionsCount = topic.sessionCountBetween(start: start, end: end)
-        let unitTitle = sessionsCount == 1 ? "session" : "sessions"
-        let title: AttributedString = (try? .init(markdown: "**\(sessionsCount)** \(unitTitle) today")) ?? .init()
-        return title
+        if sessionsCount > 0 {
+            let unitTitle = sessionsCount == 1 ? "session" : "sessions"
+            let title: AttributedString = (try? .init(markdown: "**\(sessionsCount)** \(unitTitle) today")) ?? .init()
+            return title
+        } else {
+            return nil
+        }
     }
 
     var activeSessionStartTitle: String? {
@@ -262,10 +272,23 @@ struct TopicViewData {
             return nil
         }
     }
+
+    func sessionRows(start: Date, end: Date) -> [SessionRow] {
+        let todaysSessions = Topic.sessionsBetween(start: start, end: end, from: topic.sessions)
+        let rows = todaysSessions.map { session in
+            SessionRow(
+                id: session.id,
+                start: session.start.formatted(date: .omitted, time: .shortened),
+                duration: Duration.seconds(session.end.timeIntervalSince(session.start)).formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
+            )
+        }
+        return rows
+    }
 }
 
 struct TopicView: View {
     @ObservedObject var store: TopicStore
+    @State var isShowingTodaysSessions: Bool = false
 
     private var viewData: TopicViewData {
         .init(topic: store.topic)
@@ -341,21 +364,47 @@ struct TopicView: View {
 
                 Spacer().frame(height: 10)
 
-                Button {
-                    // TODO: edit sessions
-                } label: {
-                    HStack(spacing: 2) {
-                        Text(viewData.sessionCountTitle(start: store.startOfToday, end: timeline.date))
-                            .font(.subheadline)
-                            .foregroundColor(Color.secondaryLabel)
-                        if false { // TODO: session edit support
-                            Image(systemName: "square.and.pencil")
+                if let sessionsCountTitle = viewData.sessionCountTitle(start: store.startOfToday, end: timeline.date) {
+                    Button {
+                        isShowingTodaysSessions.toggle()
+                    } label: {
+                        HStack(spacing: 2) {
+                            Text(sessionsCountTitle)
+                                .font(.subheadline)
+                            Image(systemName: "chevron.down.circle")
+                                .rotationEffect(isShowingTodaysSessions ? .degrees(180) : .degrees(0))
+                                .animation(.interactiveSpring(), value: isShowingTodaysSessions)
+                        }
+                        .foregroundColor(isShowingTodaysSessions ? Color.label : Color.secondaryLabel)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                if isShowingTodaysSessions {
+                    Spacer().frame(height: 6)
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        ForEach(viewData.sessionRows(start: store.startOfToday, end: timeline.date)) { row in
+                            HStack(spacing: 0) {
+                                Button {
+                                    //                                store.deleteSessionButtonTapped(row.id)
+                                } label: {
+                                    Image(systemName: "minus.circle")
+                                        .padding(5)
+                                }
+                                .foregroundColor(Color.secondaryLabel)
+                                .buttonStyle(.plain)
+
+                                Text(row.start)
+                                    .monospacedDigit()
+                                    .foregroundColor(Color.secondaryLabel)
+                                Spacer()
+                                Text(row.duration)
+                                    .monospacedDigit()
+                            }
                         }
                     }
-                    .foregroundColor(Color.tertiaryLabel)
                 }
-                .buttonStyle(.plain)
-                .disabled(true) // TODO: session edit support
             }
         }
         .padding()
