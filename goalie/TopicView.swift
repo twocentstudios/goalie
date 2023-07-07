@@ -129,6 +129,8 @@ final class TopicStore: ObservableObject {
         }
     }
 
+    func deleteSessionButtonTapped(_ sessionID: UUID) {}
+
     func alertButtonTapped(_ action: AlertAction?) {
         switch action {
         case .none:
@@ -214,6 +216,11 @@ struct TopicViewData {
         let duration: String
     }
 
+    struct ActiveSessionRow: Equatable {
+        let start: String
+        let duration: String
+    }
+
     let topic: Topic
 
     var isTimerPaused: Bool {
@@ -268,6 +275,17 @@ struct TopicViewData {
         if let activeSessionStart = topic.activeSessionStart {
             let formattedStart = activeSessionStart.formatted(date: .omitted, time: .shortened)
             return "Running since \(formattedStart)"
+        } else {
+            return nil
+        }
+    }
+
+    func activeSessionRow(end: Date) -> ActiveSessionRow? {
+        if let activeSessionStart = topic.activeSessionStart {
+            return ActiveSessionRow(
+                start: activeSessionStart.formatted(date: .omitted, time: .shortened),
+                duration: Duration.seconds(end.timeIntervalSince(activeSessionStart)).formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
+            )
         } else {
             return nil
         }
@@ -384,10 +402,30 @@ struct TopicView: View {
                     Spacer().frame(height: 6)
 
                     VStack(alignment: .leading, spacing: 0) {
+                        if let activeSessionRow = viewData.activeSessionRow(end: timeline.date) {
+                            HStack(spacing: 0) {
+                                Button {
+                                    store.cancelCurrentSessionButtonTapped()
+                                } label: {
+                                    Image(systemName: "minus.circle")
+                                        .padding(5)
+                                }
+                                .foregroundColor(Color.secondaryLabel)
+                                .buttonStyle(.plain)
+
+                                Text(activeSessionRow.start)
+                                    .monospacedDigit()
+                                    .foregroundColor(Color.secondaryLabel)
+                                Spacer()
+                                Text(activeSessionRow.duration)
+                                    .monospacedDigit()
+                            }
+                        }
+
                         ForEach(viewData.sessionRows(start: store.startOfToday, end: timeline.date)) { row in
                             HStack(spacing: 0) {
                                 Button {
-                                    //                                store.deleteSessionButtonTapped(row.id)
+                                    store.deleteSessionButtonTapped(row.id)
                                 } label: {
                                     Image(systemName: "minus.circle")
                                         .padding(5)
@@ -423,6 +461,6 @@ struct TopicView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        TopicView(store: .init(topic: .init(id: .init(), activeSessionStart: .now, sessions: .init(), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
+        TopicView(store: .init(topic: .init(id: .init(), activeSessionStart: .now, sessions: .init(uniqueElements: [.init(id: .init(), start: .now.addingTimeInterval(-100), end: .now.addingTimeInterval(-20))]), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
     }
 }
