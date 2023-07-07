@@ -57,6 +57,11 @@ final class TopicStore: ObservableObject {
 
     enum Destination {
         case goalAdd(TimeInterval?) // the current goal as the initial value
+        case confirmingCancelCurrentSession(AlertState<AlertAction>)
+    }
+
+    enum AlertAction {
+        case cancelCurrentSession
     }
 
     private var save: (Topic) -> Void
@@ -102,8 +107,39 @@ final class TopicStore: ObservableObject {
         topic.goals.append(.init(id: uuid(), start: now, duration: newGoal))
     }
 
+    func tapCancelCurrentSession() {
+        guard destination == nil else {
+            assertionFailure("Unexpected state: destination is already set")
+            return
+        }
+
+        if topic.activeSessionStart != nil {
+            destination = .confirmingCancelCurrentSession(
+                AlertState {
+                    TextState("Are you sure you want to the remove the currently running session?")
+                } actions: {
+                    ButtonState(role: .destructive, action: .send(.cancelCurrentSession)) {
+                        TextState("Remove Session")
+                    }
+                    ButtonState(role: .cancel, action: .send(nil)) {
+                        TextState("Continue Session")
+                    }
+                }
+            )
+        }
+    }
+
+    func alertButtonTapped(_ action: AlertAction?) {
+        switch action {
+        case .none:
+            break
+        case .cancelCurrentSession:
+            topic.activeSessionStart = nil
+        }
+    }
+
     func editSessions() {}
-    
+
     func debugResetTopic() {
         topic = Topic.new
     }
@@ -217,6 +253,15 @@ struct TopicViewData {
         let title: AttributedString = (try? .init(markdown: "**\(sessionsCount)** \(unitTitle) today")) ?? .init()
         return title
     }
+
+    var activeSessionStartTitle: String? {
+        if let activeSessionStart = topic.activeSessionStart {
+            let formattedStart = activeSessionStart.formatted(date: .omitted, time: .shortened)
+            return "Running since \(formattedStart)"
+        } else {
+            return nil
+        }
+    }
 }
 
 struct TopicView: View {
@@ -275,19 +320,21 @@ struct TopicView: View {
                 }
                 .buttonStyle(.plain)
 
-                // TODO: implement current session cancellation
-                if false {
+                if let activeSessionStartTitle = viewData.activeSessionStartTitle {
                     Spacer().frame(height: 14)
                     HStack(spacing: 2) {
-                        Text("Current session started at 1:02pm")
-                            .font(.subheadline)
-                            .foregroundColor(Color.secondaryLabel)
+                        Text(activeSessionStartTitle)
+                            .font(Font.footnote)
+                            .foregroundColor(Color.tertiaryLabel)
                         Button {
-                            // TODO: confirm cancel session
+                            store.tapCancelCurrentSession()
                         } label: {
                             Image(systemName: "minus.circle")
                         }
                         .buttonStyle(.plain)
+                        .alert(unwrapping: $store.destination, case: /TopicStore.Destination.confirmingCancelCurrentSession) { action in
+                            store.alertButtonTapped(action)
+                        }
                     }
                     .foregroundColor(Color.tertiaryLabel)
                 }
@@ -327,6 +374,6 @@ struct TopicView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        TopicView(store: .init(topic: .init(id: .init(), sessions: .init(), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
+        TopicView(store: .init(topic: .init(id: .init(), activeSessionStart: .now, sessions: .init(), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
     }
 }
