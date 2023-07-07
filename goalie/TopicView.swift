@@ -271,15 +271,6 @@ struct TopicViewData {
         }
     }
 
-    var activeSessionStartTitle: String? {
-        if let activeSessionStart = topic.activeSessionStart {
-            let formattedStart = activeSessionStart.formatted(date: .omitted, time: .shortened)
-            return "Running since \(formattedStart)"
-        } else {
-            return nil
-        }
-    }
-
     func activeSessionRow(end: Date) -> ActiveSessionRow? {
         if let activeSessionStart = topic.activeSessionStart {
             return ActiveSessionRow(
@@ -322,7 +313,9 @@ struct TopicView: View {
                         // TODO: debug only
                         store.debugResetTopic()
                     }
+
                 Spacer().frame(height: 2)
+
                 HStack(spacing: 4) {
                     Text(viewData.currentGoalTitle)
                         .font(.title3)
@@ -341,7 +334,9 @@ struct TopicView: View {
                     }
                     .buttonStyle(.plain)
                 }
+
                 Spacer().frame(height: 16)
+
                 Button {
                     store.startStopButtonTapped()
                 } label: {
@@ -361,26 +356,10 @@ struct TopicView: View {
                 }
                 .buttonStyle(.plain)
 
-                if let activeSessionStartTitle = viewData.activeSessionStartTitle {
-                    Spacer().frame(height: 14)
-                    HStack(spacing: 2) {
-                        Text(activeSessionStartTitle)
-                            .font(Font.footnote)
-                            .foregroundColor(Color.tertiaryLabel)
-                        Button {
-                            store.cancelCurrentSessionButtonTapped()
-                        } label: {
-                            Image(systemName: "minus.circle")
-                        }
-                        .buttonStyle(.plain)
-                        .alert(unwrapping: $store.destination, case: /TopicStore.Destination.confirmingCancelCurrentSession) { action in
-                            store.alertButtonTapped(action)
-                        }
-                    }
-                    .foregroundColor(Color.tertiaryLabel)
-                }
+                // Previews times out without this lol
+                if false {}
 
-                Spacer().frame(height: 10)
+                Spacer().frame(height: 16)
 
                 if let sessionsCountTitle = viewData.sessionCountTitle(start: store.startOfToday, end: timeline.date) {
                     Button {
@@ -391,11 +370,13 @@ struct TopicView: View {
                                 .font(.subheadline)
                             Image(systemName: "chevron.down.circle")
                                 .rotationEffect(isShowingTodaysSessions ? .degrees(180) : .degrees(0))
-                                .animation(.interactiveSpring(), value: isShowingTodaysSessions)
                         }
                         .foregroundColor(isShowingTodaysSessions ? Color.label : Color.secondaryLabel)
                     }
                     .buttonStyle(.plain)
+                    .alert(unwrapping: $store.destination, case: /TopicStore.Destination.confirmingCancelCurrentSession) { action in
+                        store.alertButtonTapped(action)
+                    }
                 }
 
                 if isShowingTodaysSessions {
@@ -459,7 +440,7 @@ struct TopicView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct TopicView_Previews: PreviewProvider {
     static var previews: some View {
         TopicView(store: .init(topic: .init(id: .init(), activeSessionStart: .now, sessions: .init(uniqueElements: [.init(id: .init(), start: .now.addingTimeInterval(-100), end: .now.addingTimeInterval(-20))]), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
     }
