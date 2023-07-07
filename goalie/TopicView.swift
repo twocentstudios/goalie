@@ -84,7 +84,7 @@ final class TopicStore: ObservableObject {
         }
     }
 
-    func startStop() {
+    func startStopButtonTapped() {
         if let start = topic.activeSessionStart {
             let newSession = Session(id: uuid(), start: start, end: now)
             topic.activeSessionStart = nil
@@ -94,11 +94,11 @@ final class TopicStore: ObservableObject {
         }
     }
 
-    func showGoalAdd() {
+    func showGoalAddButtonTapped() {
         destination = .goalAdd(topic.currentGoal?.duration ?? 0)
     }
 
-    func addGoal(_ newGoal: TimeInterval?) {
+    func addGoalButtonTapped(_ newGoal: TimeInterval?) {
         if topic.currentGoal?.duration == newGoal {
             // goal hasn't changed, do nothing
             return
@@ -107,7 +107,7 @@ final class TopicStore: ObservableObject {
         topic.goals.append(.init(id: uuid(), start: now, duration: newGoal))
     }
 
-    func tapCancelCurrentSession() {
+    func cancelCurrentSessionButtonTapped() {
         guard destination == nil else {
             assertionFailure("Unexpected state: destination is already set")
             return
@@ -138,7 +138,7 @@ final class TopicStore: ObservableObject {
         }
     }
 
-    func editSessions() {}
+    func editSessionsButtonTapped() {}
 
     func debugResetTopic() {
         topic = Topic.new
@@ -288,7 +288,7 @@ struct TopicView: View {
                         .foregroundColor(Color.secondaryLabel)
 
                     Button {
-                        store.showGoalAdd()
+                        store.showGoalAddButtonTapped()
                     } label: {
                         HStack(spacing: 2) {
                             Text("Goal")
@@ -302,7 +302,7 @@ struct TopicView: View {
                 }
                 Spacer().frame(height: 16)
                 Button {
-                    store.startStop()
+                    store.startStopButtonTapped()
                 } label: {
                     Text(viewData.startStopButtonTitle)
                         .font(.title2)
@@ -327,7 +327,7 @@ struct TopicView: View {
                             .font(Font.footnote)
                             .foregroundColor(Color.tertiaryLabel)
                         Button {
-                            store.tapCancelCurrentSession()
+                            store.cancelCurrentSessionButtonTapped()
                         } label: {
                             Image(systemName: "minus.circle")
                         }
@@ -366,7 +366,7 @@ struct TopicView: View {
         ) { $initialGoal in
             GoalAddView(
                 initialGoal: initialGoal,
-                save: { newGoal in store.addGoal(newGoal) }
+                save: { newGoal in store.addGoalButtonTapped(newGoal) }
             )
         }
     }
