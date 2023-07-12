@@ -30,7 +30,10 @@ extension Week {
     init(date: Date, calendar: Calendar) {
         // Get components for the relevant week
         let inputDateComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .month], from: date)
-
+        self.init(inputDateComponents: inputDateComponents, calendar: calendar)
+    }
+    
+    init(inputDateComponents: DateComponents, calendar: Calendar) {
         // Get the date components for the first day of the relevant week
         var firstDayOfWeekComponents = inputDateComponents
         firstDayOfWeekComponents.weekday = 1
@@ -54,6 +57,35 @@ extension Week {
         month = inputDateComponents.month!
         firstDayOfWeek = firstDayOfWeekComponents.day!
         lastDayOfWeek = lastDayOfWeekComponents.day!
+    }
+    
+    // Returns first day of week
+    var dateComponents: DateComponents {
+        var components = DateComponents()
+        components.yearForWeekOfYear = yearForWeekOfYear
+        components.weekOfYear = weekOfYear
+        components.month = month
+        components.weekday = 1
+        components.day = firstDayOfWeek
+        return components
+    }
+    
+    func previousWeek(calendar: Calendar) -> Week? {
+        let minusOneWeekDurationComponents = DateComponents(weekOfYear: -1)
+        return weekByAddingDateComponents(durationComponents: minusOneWeekDurationComponents, calendar: calendar)
+    }
+    
+    func nextWeek(calendar: Calendar) -> Week? {
+        let plusOneWeekDurationComponents = DateComponents(weekOfYear: 1)
+        return weekByAddingDateComponents(durationComponents: plusOneWeekDurationComponents, calendar: calendar)
+    }
+    
+    func weekByAddingDateComponents(durationComponents: DateComponents, calendar: Calendar) -> Week? {
+        let components = dateComponents
+        guard let currentDate = calendar.date(from: components) else { return nil }
+        guard let nextWeekDate = calendar.date(byAdding: durationComponents, to: currentDate, wrappingComponents: true) else { return nil }
+        let nextWeek = Week(date: nextWeekDate, calendar: calendar)
+        return nextWeek
     }
 }
 
