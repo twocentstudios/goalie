@@ -15,11 +15,24 @@ final class WeekStore: ObservableObject {
         @Dependency(\.calendar) var calendar
         @Dependency(\.timeZone) var timeZone
 
+        let week = Week(date: now, calendar: calendar)
+        let topicWeek = TopicWeek(topic: topic, week: week)
+        self.topicWeek = topicWeek
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.calendar = calendar
+        dateFormatter.timeZone = timeZone
+        self.dateFormatter = dateFormatter
+    }
+}
+
+extension Week {
+    init(date: Date, calendar: Calendar) {
         // Get components for the relevant week
-        let nowComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .month], from: now)
+        let inputDateComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .month], from: date)
 
         // Get the date components for the first day of the relevant week
-        var firstDayOfWeekComponents = nowComponents
+        var firstDayOfWeekComponents = inputDateComponents
         firstDayOfWeekComponents.weekday = 1
         firstDayOfWeekComponents.calendar = calendar
         let firstDayOfWeekDate = firstDayOfWeekComponents.date!
@@ -28,7 +41,7 @@ final class WeekStore: ObservableObject {
         firstDayOfWeekComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .month, .day], from: firstDayOfWeekDate)
         
         // Get the date components for the last day of the relevant week
-        var lastDayOfWeekComponents = nowComponents
+        var lastDayOfWeekComponents = inputDateComponents
         lastDayOfWeekComponents.weekday = 7
         lastDayOfWeekComponents.calendar = calendar
         let lastDayOfWeekDate = lastDayOfWeekComponents.date!
@@ -36,14 +49,11 @@ final class WeekStore: ObservableObject {
         lastDayOfWeekComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .month, .day], from: lastDayOfWeekDate)
         // Use the date of the first day of the week to calculate the day
 
-        let week = Week(yearForWeekOfYear: nowComponents.yearForWeekOfYear!, weekOfYear: nowComponents.weekOfYear!, month: nowComponents.month!, firstDayOfWeek: firstDayOfWeekComponents.day!, lastDayOfWeek: lastDayOfWeekComponents.day!)
-        let topicWeek = TopicWeek(topic: topic, week: week)
-        self.topicWeek = topicWeek
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.calendar = calendar
-        dateFormatter.timeZone = timeZone
-        self.dateFormatter = dateFormatter
+        yearForWeekOfYear = inputDateComponents.yearForWeekOfYear!
+        weekOfYear = inputDateComponents.weekOfYear!
+        month = inputDateComponents.month!
+        firstDayOfWeek = firstDayOfWeekComponents.day!
+        lastDayOfWeek = lastDayOfWeekComponents.day!
     }
 }
 
