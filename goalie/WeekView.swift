@@ -295,14 +295,14 @@ struct WeekView: View {
                             .padding(.horizontal, 4)
                         Spacer()
                         Text(day.duration)
-                            .monospacedDigit()
+                            .monospaced()
                         Text("/")
                             .foregroundColor(Color.tertiaryLabel)
-                            .monospacedDigit()
+                            .monospaced()
                             .padding(.horizontal, 2)
                         Text(day.goal)
                             .foregroundColor(Color.tertiaryLabel)
-                            .monospacedDigit()
+                            .monospaced()
                     }
                 }
             }
@@ -313,9 +313,9 @@ struct WeekView: View {
 struct WeekView_Previews: PreviewProvider {
     static var previews: some View {
         WeekView(viewData: .mock)
-            .frame(width: 200)
+            .frame(width: 250)
         WeekScreen(store: .init(topic: .new))
-            .frame(width: 200)
+            .frame(width: 250)
     }
 }
 
