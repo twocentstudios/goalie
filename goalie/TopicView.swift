@@ -37,7 +37,20 @@ struct Session: Equatable, Identifiable, Codable {
 struct Goal: Equatable, Identifiable, Codable {
     let id: UUID
     let start: Date // always normalized to the start of a day
-    let duration: TimeInterval? // nil intentionally unsets a goal
+    let duration: TimeInterval? // nil intentionally unsets a goal, always > 0
+    
+    init(id: UUID, start: Date, duration: TimeInterval?) {
+        let validDuration: TimeInterval?
+        if let duration, duration > 0 {
+            validDuration = duration
+        } else {
+            validDuration = nil
+        }
+        
+        self.id = id
+        self.start = start
+        self.duration = validDuration
+    }
 }
 
 final class TopicStore: ObservableObject {
