@@ -5,6 +5,8 @@ import SystemColors
 
 final class WeekStore: ObservableObject {
     @Dependency(\.date.now) var now
+    @Dependency(\.calendar) var calendar
+    @Dependency(\.timeZone) var timeZone
 //    @Dependency(\.uuid) var uuid
     // @Dependency(\.mainRunLoop) var mainRunLoop
 
@@ -26,6 +28,26 @@ final class WeekStore: ObservableObject {
         dateFormatter.calendar = calendar
         dateFormatter.timeZone = timeZone
         self.dateFormatter = dateFormatter
+    }
+
+    func previousWeekTapped() {
+        guard let newWeek = topicWeek.week.previousWeek(calendar: calendar) else {
+            assertionFailure("Previous week has no entries")
+            return
+        }
+        var newTopicWeek = topicWeek
+        newTopicWeek.week = newWeek
+        topicWeek = newTopicWeek
+    }
+
+    func nextWeekTapped() {
+        guard let newWeek = topicWeek.week.nextWeek(calendar: calendar) else {
+            assertionFailure("Next week has no entries")
+            return
+        }
+        var newTopicWeek = topicWeek
+        newTopicWeek.week = newWeek
+        topicWeek = newTopicWeek
     }
 }
 
@@ -140,8 +162,8 @@ extension Week {
 
 struct TopicWeek: Equatable, Identifiable {
     var id: String { "\(topic.id):\(week.id)" }
-    let topic: Topic
-    let week: Week
+    var topic: Topic
+    var week: Week
 }
 
 struct Week: Equatable, Identifiable {
@@ -218,7 +240,7 @@ struct WeekScreen: View {
     }
 
     var body: some View {
-        WeekView(viewData: viewData)
+        WeekView(viewData: viewData, previousWeekTapped: store.previousWeekTapped, nextWeekTapped: store.nextWeekTapped)
     }
 }
 

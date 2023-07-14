@@ -472,6 +472,9 @@ struct TopicView: View {
                 save: { newGoal in store.addGoalButtonTapped(newGoal) }
             )
         }
+        .sheet(isPresented: .constant(true)) { // TODO: debugging only
+            WeekScreen(store: .init(topic: store.topic))
+        }
     }
 }
 
