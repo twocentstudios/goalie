@@ -102,7 +102,7 @@ extension Week {
         assert(start == calendar.startOfDay(for: start))
 
         let almostOneDayComponents = DateComponents(day: 1, second: -1)
-        guard let end = calendar.date(byAdding: almostOneDayComponents, to: start, wrappingComponents: true) else {
+        guard let end = calendar.date(byAdding: almostOneDayComponents, to: start, wrappingComponents: false) else {
             fatalError("Couldn't get endDate from startDate: \(start)")
         }
 
