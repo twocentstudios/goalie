@@ -11,23 +11,16 @@ final class WeekStore: ObservableObject {
     // @Dependency(\.mainRunLoop) var mainRunLoop
 
     @Published var topicWeek: TopicWeek
-    let dateFormatter: DateFormatter
 
     init(topic: Topic) {
         @Dependency(\.date.now) var now
         @Dependency(\.calendar) var calendar
-        @Dependency(\.timeZone) var timeZone
 
         // TODO: should we use Gregorian Calendar for calendar?
 
         let week = Week(date: now, calendar: calendar)
         let topicWeek = TopicWeek(topic: topic, week: week)
         self.topicWeek = topicWeek
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.calendar = calendar
-        dateFormatter.timeZone = timeZone
-        self.dateFormatter = dateFormatter
     }
 
     func previousWeekTapped() {
@@ -53,7 +46,6 @@ final class WeekStore: ObservableObject {
 
 extension Week {
     init(date: Date, calendar: Calendar) {
-        // Get components for the relevant week
         let inputDateComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .month], from: date)
         self.init(inputDateComponents: inputDateComponents, calendar: calendar)
     }
@@ -73,20 +65,10 @@ extension Week {
         // Use the date of the first day of the week to calculate the day
         firstDayOfWeekComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .month, .day], from: firstDayOfWeekDate)
 
-        // Get the date components for the last day of the relevant week
-        var lastDayOfWeekComponents = inputDateComponents
-        lastDayOfWeekComponents.weekday = 7
-        lastDayOfWeekComponents.calendar = calendar
-        let lastDayOfWeekDate = lastDayOfWeekComponents.date!
-
-        lastDayOfWeekComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .month, .day], from: lastDayOfWeekDate)
-        // Use the date of the first day of the week to calculate the day
-
         yearForWeekOfYear = inputDateComponents.yearForWeekOfYear!
         weekOfYear = inputDateComponents.weekOfYear!
         month = inputDateComponents.month!
         firstDayOfWeek = firstDayOfWeekComponents.day!
-        lastDayOfWeek = lastDayOfWeekComponents.day!
         weekDayIntervals = Self.weekDayIntervals(dateComponents: inputDateComponents, calendar: calendar)
     }
 
@@ -107,6 +89,18 @@ extension Week {
         }
 
         return DayInterval(startDate: start, endDate: end)
+    }
+    
+    var firstMoment: Date {
+        weekDayIntervals[0].startDate
+    }
+    
+    var lastMoment: Date {
+        weekDayIntervals[6].endDate
+    }
+    
+    var range: Range<Date> {
+        firstMoment ..< lastMoment
     }
 
     // Returns first day of week
@@ -172,7 +166,6 @@ struct Week: Equatable, Identifiable {
     var weekOfYear: Int
     var month: Int
     var firstDayOfWeek: Int // 9 -> July 9th
-    var lastDayOfWeek: Int
     var weekDayIntervals: [DayInterval]
 }
 
@@ -201,14 +194,15 @@ struct WeekScreen: View {
 
     private var viewData: WeekViewData {
         let topicWeek = store.topicWeek
-        let monthName = store.dateFormatter.standaloneMonthSymbols[topicWeek.week.month - 1]
+        let title: String = "Week " + store.topicWeek.week.firstMoment.formatted(.dateTime.week(.defaultDigits))
+        let subtitle: String = store.topicWeek.week.range.formatted(.interval.year().month(.wide).day())
         let viewData = WeekViewData(
-            title: "Week \(topicWeek.week.weekOfYear)",
-            subtitle: "\(monthName) \(topicWeek.week.firstDayOfWeek)-\(topicWeek.week.lastDayOfWeek), \(topicWeek.week.yearForWeekOfYear)", // TODO: this doesn't work for start/end days in different months
+            title: title,
+            subtitle: subtitle,
             previousWeekDisabled: false, // TODO:
             nextWeekDisabled: false, // TODO:
             days: topicWeek.week.weekDayIntervals.map { interval -> WeekViewData.Day in
-                let dayTitle = interval.startDate.formatted(.verbatim("\(month: .twoDigits)/\(day: .twoDigits)", timeZone: store.dateFormatter.timeZone, calendar: store.dateFormatter.calendar))
+                let dayTitle = interval.startDate.formatted(.dateTime.month(.twoDigits).day(.twoDigits))
                 let emptyInterval = "--:--:--"
                 let duration: String
                 if store.now < interval.startDate {
