@@ -211,7 +211,7 @@ struct WeekScreen: View {
                 let dayTitle = interval.startDate.formatted(.verbatim("\(month: .twoDigits)/\(day: .twoDigits)", timeZone: store.dateFormatter.timeZone, calendar: store.dateFormatter.calendar))
                 let emptyInterval = "--:--:--"
                 let duration: String
-                if store.now > interval.endDate {
+                if store.now < interval.startDate {
                     duration = emptyInterval
                 } else {
                     let durationInterval = topicWeek.topic.totalIntervalBetween(start: interval.startDate, end: interval.endDate)
