@@ -4,6 +4,7 @@ import SwiftUI
 import SystemColors
 
 final class WeekStore: ObservableObject {
+    @Dependency(\.date.now) var now
 //    @Dependency(\.uuid) var uuid
     // @Dependency(\.mainRunLoop) var mainRunLoop
 
@@ -14,7 +15,7 @@ final class WeekStore: ObservableObject {
         @Dependency(\.date.now) var now
         @Dependency(\.calendar) var calendar
         @Dependency(\.timeZone) var timeZone
-        
+
         // TODO: should we use Gregorian Calendar for calendar?
 
         let week = Week(date: now, calendar: calendar)
@@ -64,13 +65,14 @@ extension Week {
         month = inputDateComponents.month!
         firstDayOfWeek = firstDayOfWeekComponents.day!
         lastDayOfWeek = lastDayOfWeekComponents.day!
+        weekDayIntervals = Self.weekDayIntervals(dateComponents: inputDateComponents, calendar: calendar)
     }
 
     static func dayInterval(for inputDateComponents: DateComponents) -> DayInterval {
         assert(inputDateComponents.yearForWeekOfYear != nil)
         assert(inputDateComponents.weekOfYear != nil)
         assert(inputDateComponents.month != nil)
-        assert(inputDateComponents.day != nil)
+        assert(inputDateComponents.weekday != nil)
         assert(inputDateComponents.calendar != nil)
         let calendar = inputDateComponents.calendar!
 
@@ -81,10 +83,10 @@ extension Week {
         guard let end = calendar.date(byAdding: almostOneDayComponents, to: start, wrappingComponents: true) else {
             fatalError("Couldn't get endDate from startDate: \(start)")
         }
-        
+
         return DayInterval(startDate: start, endDate: end)
     }
-    
+
     // Returns first day of week
     var dateComponents: DateComponents {
         var components = DateComponents()
@@ -114,19 +116,25 @@ extension Week {
         return nextWeek
     }
 
-    /// Returns an array of 7 tuples corresponding to the 7 days of the week starting on Sunday
-    /// The first date is midnight, the second is the last second of the same day.
-    func weekDayIntervals(calendar: Calendar) -> (DayInterval, DayInterval, DayInterval, DayInterval, DayInterval, DayInterval, DayInterval) {
+    /// Returns an array of exactly 7 DayIntervals corresponding to the 7 days of the week starting on Sunday
+    /// The DayInterval start date is midnight, the DayInterval end date is the last second of the same day.
+    static func weekDayIntervals(dateComponents: DateComponents, calendar: Calendar) -> [DayInterval] {
+        assert(dateComponents.yearForWeekOfYear != nil)
+        assert(dateComponents.weekOfYear != nil)
+        assert(dateComponents.month != nil)
+
         let startDateComponents = dateComponents
         var dayIntervals: [DayInterval] = []
-        for weekday in 1...7 {
+        for weekday in 1 ... 7 {
             var weekdayComponents = startDateComponents
             weekdayComponents.weekday = weekday
             weekdayComponents.day = nil
+            weekdayComponents.calendar = calendar
             let dayInterval = Self.dayInterval(for: weekdayComponents)
             dayIntervals.append(dayInterval)
         }
-        return (dayIntervals[0], dayIntervals[1], dayIntervals[2], dayIntervals[3], dayIntervals[4], dayIntervals[5], dayIntervals[6])
+        assert(dayIntervals.count == 7)
+        return dayIntervals
     }
 }
 
@@ -143,11 +151,12 @@ struct Week: Equatable, Identifiable {
     var month: Int
     var firstDayOfWeek: Int // 9 -> July 9th
     var lastDayOfWeek: Int
+    var weekDayIntervals: [DayInterval]
 }
 
 struct DayInterval: Equatable {
     var startDate: Date // Midnight
-    var endDate: Date // Midnight of next day minus 1 minute
+    var endDate: Date // Midnight of next day minus 1 second
 }
 
 struct WeekViewData {
@@ -176,7 +185,34 @@ struct WeekScreen: View {
             subtitle: "\(monthName) \(topicWeek.week.firstDayOfWeek)-\(topicWeek.week.lastDayOfWeek), \(topicWeek.week.yearForWeekOfYear)",
             previousWeekDisabled: false, // TODO:
             nextWeekDisabled: false, // TODO:
-            days: []
+            days: topicWeek.week.weekDayIntervals.map { interval -> WeekViewData.Day in
+                let dayTitle = interval.startDate.formatted(.verbatim("\(month: .twoDigits)/\(day: .twoDigits)", timeZone: store.dateFormatter.timeZone, calendar: store.dateFormatter.calendar))
+                let emptyInterval = "--:--:--"
+                let duration: String
+                if store.now > interval.endDate {
+                    duration = emptyInterval
+                } else {
+                    let durationInterval = topicWeek.topic.totalIntervalBetween(start: interval.startDate, end: interval.endDate)
+                    let durationDuration = Duration.seconds(durationInterval)
+                    duration = durationDuration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
+                }
+                let goalInterval = topicWeek.topic.goal(for: interval.startDate)
+                let goal: String
+                if let goalDuration = goalInterval?.duration {
+                    let duration = Duration.seconds(goalDuration)
+                    goal = duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
+                } else {
+                    goal = emptyInterval
+                }
+                let goalRatioSymbolName: String = "circle.dotted" // TODO: calculate
+                let day = WeekViewData.Day(
+                    goalRatioSymbolName: goalRatioSymbolName,
+                    dayTitle: dayTitle,
+                    duration: duration,
+                    goal: goal
+                )
+                return day
+            }
         )
         return viewData
     }

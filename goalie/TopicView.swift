@@ -36,7 +36,7 @@ struct Session: Equatable, Identifiable, Codable {
 
 struct Goal: Equatable, Identifiable, Codable {
     let id: UUID
-    let start: Date
+    let start: Date // always normalized to the start of a day
     let duration: TimeInterval? // nil intentionally unsets a goal
 }
 
@@ -106,7 +106,7 @@ final class TopicStore: ObservableObject {
             return
         }
 
-        topic.goals.append(.init(id: uuid(), start: now, duration: newGoal))
+        topic.goals.append(.init(id: uuid(), start: calendar.startOfDay(for: now), duration: newGoal))
     }
 
     func cancelCurrentSessionButtonTapped() {
@@ -172,6 +172,10 @@ final class TopicStore: ObservableObject {
 extension Topic {
     var currentGoal: Goal? {
         goals.max(by: { $0.start < $1.start })
+    }
+    
+    func goal(for date: Date) -> Goal? {
+        goals.reversed().first(where: { $0.start <= date })
     }
 
     /// Generally assumes `start` is midnight on day D.
