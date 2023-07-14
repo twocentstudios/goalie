@@ -204,7 +204,7 @@ struct WeekScreen: View {
         let monthName = store.dateFormatter.standaloneMonthSymbols[topicWeek.week.month - 1]
         let viewData = WeekViewData(
             title: "Week \(topicWeek.week.weekOfYear)",
-            subtitle: "\(monthName) \(topicWeek.week.firstDayOfWeek)-\(topicWeek.week.lastDayOfWeek), \(topicWeek.week.yearForWeekOfYear)",
+            subtitle: "\(monthName) \(topicWeek.week.firstDayOfWeek)-\(topicWeek.week.lastDayOfWeek), \(topicWeek.week.yearForWeekOfYear)", // TODO: this doesn't work for start/end days in different months
             previousWeekDisabled: false, // TODO:
             nextWeekDisabled: false, // TODO:
             days: topicWeek.week.weekDayIntervals.map { interval -> WeekViewData.Day in
