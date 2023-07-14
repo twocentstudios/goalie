@@ -205,15 +205,21 @@ struct WeekScreen: View {
             nextWeekDisabled: false, // TODO:
             days: topicWeek.week.weekDayIntervals.map { interval -> WeekViewData.Day in
                 let dayTitle = interval.startDate.formatted(.dateTime.month(.twoDigits).day(.twoDigits))
+
                 let emptyInterval = "--:--:--"
+
+                let durationInterval: TimeInterval?
                 let duration: String
                 if store.now < interval.startDate {
                     duration = emptyInterval
+                    durationInterval = nil
                 } else {
-                    let durationInterval = topicWeek.topic.totalIntervalBetween(start: interval.startDate, end: interval.endDate)
-                    let durationDuration = Duration.seconds(durationInterval)
+                    let validDurationInterval = topicWeek.topic.totalIntervalBetween(start: interval.startDate, end: interval.endDate)
+                    let durationDuration = Duration.seconds(validDurationInterval)
                     duration = durationDuration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
+                    durationInterval = validDurationInterval
                 }
+
                 let goalInterval = topicWeek.topic.goal(for: interval.startDate)
                 let goal: String
                 if let goalDuration = goalInterval?.duration {
@@ -222,7 +228,20 @@ struct WeekScreen: View {
                 } else {
                     goal = emptyInterval
                 }
-                let goalRatioSymbolName: String = "circle.dotted" // TODO: calculate
+
+                let goalRatioSymbolName: String
+                if let durationInterval, let goalDuration = goalInterval?.duration {
+                    let ratio = durationInterval / goalDuration
+                    switch ratio {
+                    case ...0: goalRatioSymbolName = "circle"
+                    case 0 ..< 1: goalRatioSymbolName = "circle.bottomhalf.fill"
+                    case 1...: goalRatioSymbolName = "circle.fill"
+                    default: fatalError()
+                    }
+                } else {
+                    goalRatioSymbolName = "circle.dotted"
+                }
+
                 let day = WeekViewData.Day(
                     goalRatioSymbolName: goalRatioSymbolName,
                     dayTitle: dayTitle,
