@@ -5,18 +5,20 @@ import SystemColors
 
 final class WeekStore: ObservableObject {
     @Dependency(\.date.now) var now
-    @Dependency(\.calendar) var calendar
-    @Dependency(\.timeZone) var timeZone
-//    @Dependency(\.uuid) var uuid
-    // @Dependency(\.mainRunLoop) var mainRunLoop
 
     @Published var topicWeek: TopicWeek
+    let calendar: Calendar
 
     init(topic: Topic) {
         @Dependency(\.date.now) var now
-        @Dependency(\.calendar) var calendar
+        @Dependency(\.timeZone) var timeZone
+        @Dependency(\.locale) var locale
 
-        // TODO: should we use Gregorian Calendar for calendar?
+        // Use Gregorian calendar to ensure consistency
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        calendar.locale = locale
+        self.calendar = calendar
 
         let week = Week(date: now, calendar: calendar)
         let topicWeek = TopicWeek(topic: topic, week: week)
@@ -90,15 +92,15 @@ extension Week {
 
         return DayInterval(startDate: start, endDate: end)
     }
-    
+
     var firstMoment: Date {
         weekDayIntervals[0].startDate
     }
-    
+
     var lastMoment: Date {
         weekDayIntervals[6].endDate
     }
-    
+
     var range: Range<Date> {
         firstMoment ..< lastMoment
     }
@@ -194,7 +196,7 @@ struct WeekScreen: View {
 
     private var viewData: WeekViewData {
         let topicWeek = store.topicWeek
-        let title: String = "Week " + store.topicWeek.week.firstMoment.formatted(.dateTime.week(.defaultDigits))
+        let title = "Week " + store.topicWeek.week.firstMoment.formatted(.dateTime.week(.defaultDigits))
         let subtitle: String = store.topicWeek.week.range.formatted(.interval.year().month(.wide).day())
         let viewData = WeekViewData(
             title: title,
