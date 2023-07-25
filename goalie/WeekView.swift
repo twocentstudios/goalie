@@ -193,21 +193,20 @@ struct WeekViewData {
     let days: [Day]
 }
 
-struct WeekScreen: View {
-    @ObservedObject var store: WeekStore
-
-    private var viewData: WeekViewData {
-        let topicWeek = store.topicWeek
-        let title = "Week " + topicWeek.week.firstMoment.formatted(.dateTime.week(.defaultDigits))
-        let subtitle: String = topicWeek.week.range.formatted(.interval.year().month(.wide).day().locale(store.locale))
-        let days = topicWeek.week.weekDayIntervals.map { interval -> WeekViewData.Day in
+extension WeekViewData {
+    init(topicWeek: TopicWeek, now: Date, locale: Locale) {
+        title = "Week " + topicWeek.week.firstMoment.formatted(.dateTime.week(.defaultDigits))
+        subtitle = topicWeek.week.range.formatted(.interval.year().month(.wide).day().locale(locale))
+        previousWeekDisabled = false // TODO:
+        nextWeekDisabled = false // TODO:
+        days = topicWeek.week.weekDayIntervals.map { interval -> WeekViewData.Day in
             let dayTitle = interval.startDate.formatted(.dateTime.month(.twoDigits).day(.twoDigits))
 
             let emptyInterval = "--:--:--"
 
             let durationInterval: TimeInterval?
             let duration: String
-            if store.now < interval.startDate {
+            if now < interval.startDate {
                 duration = emptyInterval
                 durationInterval = nil
             } else if !topicWeek.topic.sessionsBefore(date: interval.startDate) {
@@ -250,16 +249,14 @@ struct WeekScreen: View {
             )
             return day
         }
-        
-        let viewData = WeekViewData(
-            title: title,
-            subtitle: subtitle,
-            previousWeekDisabled: false, // TODO:
-            nextWeekDisabled: false, // TODO:
-            days: days
-        )
-        
-        return viewData
+    }
+}
+
+struct WeekScreen: View {
+    @ObservedObject var store: WeekStore
+
+    private var viewData: WeekViewData {
+        .init(topicWeek: store.topicWeek, now: store.now, locale: store.locale)
     }
 
     var body: some View {
