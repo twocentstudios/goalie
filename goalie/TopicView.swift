@@ -38,7 +38,7 @@ struct Goal: Equatable, Identifiable, Codable {
     let id: UUID
     let start: Date // always normalized to the start of a day
     let duration: TimeInterval? // nil intentionally unsets a goal, always > 0
-    
+
     init(id: UUID, start: Date, duration: TimeInterval?) {
         let validDuration: TimeInterval?
         if let duration, duration > 0 {
@@ -46,7 +46,7 @@ struct Goal: Equatable, Identifiable, Codable {
         } else {
             validDuration = nil
         }
-        
+
         self.id = id
         self.start = start
         self.duration = validDuration
@@ -70,6 +70,7 @@ final class TopicStore: ObservableObject {
 
     enum Destination {
         case goalAdd(TimeInterval?) // the current goal as the initial value
+        case history(WeekStore)
         case confirmingCancelCurrentSession(AlertState<AlertAction>)
         case confirmingDeleteSession(AlertState<AlertAction>)
     }
@@ -176,6 +177,10 @@ final class TopicStore: ObservableObject {
     }
 
     func editSessionsButtonTapped() {}
+    
+    func historyButtonTapped() {
+        destination = .history(.init(topic: topic))
+    }
 
     func debugResetTopic() {
         topic = Topic.new
@@ -186,7 +191,7 @@ extension Topic {
     var currentGoal: Goal? {
         goals.max(by: { $0.start < $1.start })
     }
-    
+
     func goal(for date: Date) -> Goal? {
         goals.reversed().first(where: { $0.start <= date })
     }
@@ -350,6 +355,15 @@ struct TopicView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            Button {
+                store.historyButtonTapped()
+            } label: {
+                Image(systemName: "calendar")
+                    .font(.body)
+                    .foregroundColor(Color.label)
+            }
+            .frame(maxWidth: .infinity, alignment: .trailing)
+
             TimelineView(.animation(minimumInterval: 1, paused: viewData.isTimerPaused)) { timeline in
                 Text(viewData.timerTitle(startOfDay: store.startOfToday, now: timeline.date))
                     .monospacedDigit()
@@ -485,8 +499,11 @@ struct TopicView: View {
                 save: { newGoal in store.addGoalButtonTapped(newGoal) }
             )
         }
-        .sheet(isPresented: .constant(true)) { // TODO: debugging only
-            WeekScreen(store: .init(topic: store.topic))
+        .sheet(
+            unwrapping: $store.destination,
+            case: /TopicStore.Destination.history)
+        { $weekStore in
+            WeekScreen(store: weekStore)
         }
     }
 }
