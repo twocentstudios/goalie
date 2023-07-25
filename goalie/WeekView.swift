@@ -196,7 +196,7 @@ struct WeekViewData {
 extension WeekViewData {
     init(topicWeek: TopicWeek, now: Date, locale: Locale) {
         title = "Week " + topicWeek.week.firstMoment.formatted(.dateTime.week(.defaultDigits))
-        subtitle = topicWeek.week.range.formatted(.interval.year().month(.wide).day().locale(locale))
+        subtitle = topicWeek.week.range.formatted(.interval.year().month(.abbreviated).day().locale(locale))
         previousWeekDisabled = false // TODO:
         nextWeekDisabled = false // TODO:
         days = topicWeek.week.weekDayIntervals.map { interval -> WeekViewData.Day in
