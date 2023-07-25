@@ -5,6 +5,8 @@ import SystemColors
 
 final class WeekStore: ObservableObject {
     @Dependency(\.date.now) var now
+    @Dependency(\.timeZone) var timeZone
+    @Dependency(\.locale) var locale
 
     @Published var topicWeek: TopicWeek
     let calendar: Calendar
@@ -196,8 +198,8 @@ struct WeekScreen: View {
 
     private var viewData: WeekViewData {
         let topicWeek = store.topicWeek
-        let title = "Week " + store.topicWeek.week.firstMoment.formatted(.dateTime.week(.defaultDigits))
-        let subtitle: String = store.topicWeek.week.range.formatted(.interval.year().month(.wide).day())
+        let title = "Week " + topicWeek.week.firstMoment.formatted(.dateTime.week(.defaultDigits))
+        let subtitle: String = topicWeek.week.range.formatted(.interval.year().month(.wide).day().locale(store.locale))
         let viewData = WeekViewData(
             title: title,
             subtitle: subtitle,
