@@ -131,7 +131,7 @@ extension Week {
     func weekByAddingDateComponents(durationComponents: DateComponents, calendar: Calendar) -> Week? {
         let components = dateComponents
         guard let currentDate = calendar.date(from: components) else { return nil }
-        guard let nextWeekDate = calendar.date(byAdding: durationComponents, to: currentDate, wrappingComponents: true) else { return nil }
+        guard let nextWeekDate = calendar.date(byAdding: durationComponents, to: currentDate, wrappingComponents: false) else { return nil }
         let nextWeek = Week(date: nextWeekDate, calendar: calendar)
         return nextWeek
     }
