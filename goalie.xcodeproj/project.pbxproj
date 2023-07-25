@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		340B04AB2A6FA04C006882EB /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340B04AA2A6FA04C006882EB /* Models.swift */; };
 		346A757F2A5B9CCE00D12521 /* WeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346A757E2A5B9CCE00D12521 /* WeekView.swift */; };
 		34DF86482A54220B00AD242B /* goalieApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86472A54220B00AD242B /* goalieApp.swift */; };
 		34DF864A2A54220B00AD242B /* TopicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF86492A54220B00AD242B /* TopicView.swift */; };
@@ -44,6 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		340B04AA2A6FA04C006882EB /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		346A757E2A5B9CCE00D12521 /* WeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekView.swift; sourceTree = "<group>"; };
 		34DF86442A54220B00AD242B /* goalie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = goalie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		34DF86472A54220B00AD242B /* goalieApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = goalieApp.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				34DF867D2A55342100AD242B /* GoalAddView.swift */,
 				34DF867F2A568E2400AD242B /* GoaliePersistenceClient.swift */,
 				34DF86812A56F47B00AD242B /* StoreState.swift */,
+				340B04AA2A6FA04C006882EB /* Models.swift */,
 				34DF864B2A54220C00AD242B /* Assets.xcassets */,
 				34DF864D2A54220C00AD242B /* goalie.entitlements */,
 				34DF864E2A54220C00AD242B /* Preview Content */,
@@ -300,6 +303,7 @@
 				34DF86822A56F47B00AD242B /* StoreState.swift in Sources */,
 				34DF864A2A54220B00AD242B /* TopicView.swift in Sources */,
 				34DF86842A56F4A100AD242B /* RootView.swift in Sources */,
+				340B04AB2A6FA04C006882EB /* Models.swift in Sources */,
 				346A757F2A5B9CCE00D12521 /* WeekView.swift in Sources */,
 				34DF86482A54220B00AD242B /* goalieApp.swift in Sources */,
 				34DF86802A568E2400AD242B /* GoaliePersistenceClient.swift in Sources */,

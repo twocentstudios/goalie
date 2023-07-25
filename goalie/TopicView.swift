@@ -1,57 +1,9 @@
 import Combine
 import CustomDump
 import Dependencies
-import IdentifiedCollections
 import SwiftUI
 import SwiftUINavigation
 import SystemColors
-
-struct Topic: Equatable, Identifiable, Codable {
-    let id: UUID
-    var activeSessionStart: Date? // non-nil when a session is active
-    var sessions: IdentifiedArrayOf<Session> // assume sorted past to future
-    var goals: IdentifiedArrayOf<Goal> // assume sorted past to future
-}
-
-extension Topic {
-    static var new: Self {
-        // NEXT: currently, only one hardcoded topic is supported. In the future, this should load the last opened topic ID from UserDefaults.
-        let onlyTopicId = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
-        return Topic(id: onlyTopicId, activeSessionStart: nil, sessions: .init(), goals: .init())
-    }
-}
-
-struct Session: Equatable, Identifiable, Codable {
-    let id: UUID
-    let start: Date
-    let end: Date
-
-    init(id: UUID, start: Date, end: Date) {
-        // TODO: check start > end
-        self.id = id
-        self.start = start
-        self.end = end
-    }
-}
-
-struct Goal: Equatable, Identifiable, Codable {
-    let id: UUID
-    let start: Date // always normalized to the start of a day
-    let duration: TimeInterval? // nil intentionally unsets a goal, always > 0
-
-    init(id: UUID, start: Date, duration: TimeInterval?) {
-        let validDuration: TimeInterval?
-        if let duration, duration > 0 {
-            validDuration = duration
-        } else {
-            validDuration = nil
-        }
-
-        self.id = id
-        self.start = start
-        self.duration = validDuration
-    }
-}
 
 final class TopicStore: ObservableObject {
     @Dependency(\.date.now) var now
@@ -184,92 +136,6 @@ final class TopicStore: ObservableObject {
 
     func debugResetTopic() {
         topic = Topic.new
-    }
-}
-
-extension Topic {
-    var currentGoal: Goal? {
-        goals.max(by: { $0.start < $1.start })
-    }
-
-    func goal(for date: Date) -> Goal? {
-        goals.reversed().first(where: { $0.start <= date })
-    }
-
-    /// Generally assumes `start` is midnight on day D.
-    /// If day D is earlier than today, `end` is assumed to be one second before midnight on day D.
-    /// If day D is today, `end` is assumed to be `now`.
-    func totalIntervalBetween(start: Date, end: Date) -> TimeInterval {
-        let activeInterval: TimeInterval
-        if let sessionStart = activeSessionStart {
-            activeInterval = end.timeIntervalSince(sessionStart)
-        } else {
-            activeInterval = 0
-        }
-
-        var matchingTimeIntervals: [TimeInterval] = [activeInterval]
-        for session in Self.sessionsBetween(start: start, end: end, from: sessions) {
-            // Ensure session.start interval before the `start` date is not counted.
-            var validatedStart = session.start
-            if session.start < start {
-                validatedStart = start
-            }
-
-            // Ensure session.end interval before the `end` date is not counted.
-            var validatedEnd = session.end
-            if session.end > end {
-                validatedEnd = end
-            }
-
-            let validatedTimeInterval = validatedEnd.timeIntervalSince(validatedStart)
-            matchingTimeIntervals.append(validatedTimeInterval)
-        }
-
-        let totalInterval = matchingTimeIntervals.reduce(0, +)
-        return totalInterval
-    }
-    
-    /// Are there any sessions before the specified (start) date?
-    /// Assumes `sessions` is sorted.
-    func sessionsBefore(date: Date) -> Bool {
-        if let earliestSession = sessions.first {
-            return earliestSession.start <= date
-        } else if let activeSessionStart {
-            // No recorded sessions, but an active session.
-            return activeSessionStart <= date
-        } else {
-            // No sessions recorded
-            return false
-        }
-    }
-
-    /// Includes `activeSession` if there is one currently running and not yet complete.
-    func sessionCountBetween(start: Date, end: Date) -> Int {
-        let matchingSessionsCount = Self.sessionsBetween(start: start, end: end, from: sessions).count
-        let activeSessionCount = activeSessionStart != nil ? 1 : 0
-        let totalCount = matchingSessionsCount + activeSessionCount
-        return totalCount
-    }
-
-    /// Assumes `from` sessions are sorted.
-    static func sessionsBetween(start: Date, end: Date, from sessions: IdentifiedArrayOf<Session>) -> IdentifiedArrayOf<Session> {
-        guard start <= end else {
-            assertionFailure("start is not before end\n\(start)\n\(end)")
-            return []
-        }
-        var matchingSessions: IdentifiedArrayOf<Session> = []
-        for session in sessions.reversed() {
-            // TODO: new day trigger crashes here with an assertion failure
-            // Probable cause is that ClosedRange requires lowerBound <= upperBound
-            if (start ... end).contains(session.start) || (start ... end).contains(session.end) {
-                matchingSessions.append(session)
-            } else if !matchingSessions.isEmpty {
-                // For performance, assume sessions array is sorted.
-                // If we've passed the relevant block of dates, then assume no more dates will match.
-                break
-            }
-        }
-        return matchingSessions
     }
 }
 
