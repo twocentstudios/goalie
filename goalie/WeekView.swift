@@ -280,6 +280,7 @@ struct WeekView: View {
                         .font(.body)
                         .foregroundColor(Color.label)
                         .padding(10)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .disabled(viewData.previousWeekDisabled)
@@ -298,6 +299,7 @@ struct WeekView: View {
                         .font(.body)
                         .foregroundColor(Color.label)
                         .padding(10)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .disabled(viewData.nextWeekDisabled)
@@ -308,7 +310,7 @@ struct WeekView: View {
             VStack(spacing: 6) {
                 ForEach(viewData.days) { day in
                     HStack(spacing: 0) {
-                        Image(systemName: day.goalRatioSymbolName) // "circle.fill" "circle.bottomhalf.fill"
+                        Image(systemName: day.goalRatioSymbolName)
                             .font(.caption)
                             .foregroundColor(Color.label)
                         Text(day.dayTitle)
