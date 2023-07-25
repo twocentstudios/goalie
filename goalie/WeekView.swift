@@ -200,62 +200,65 @@ struct WeekScreen: View {
         let topicWeek = store.topicWeek
         let title = "Week " + topicWeek.week.firstMoment.formatted(.dateTime.week(.defaultDigits))
         let subtitle: String = topicWeek.week.range.formatted(.interval.year().month(.wide).day().locale(store.locale))
+        let days = topicWeek.week.weekDayIntervals.map { interval -> WeekViewData.Day in
+            let dayTitle = interval.startDate.formatted(.dateTime.month(.twoDigits).day(.twoDigits))
+
+            let emptyInterval = "--:--:--"
+
+            let durationInterval: TimeInterval?
+            let duration: String
+            if store.now < interval.startDate {
+                duration = emptyInterval
+                durationInterval = nil
+            } else if !topicWeek.topic.sessionsBefore(date: interval.startDate) {
+                duration = emptyInterval
+                durationInterval = nil
+            } else {
+                let validDurationInterval = topicWeek.topic.totalIntervalBetween(start: interval.startDate, end: interval.endDate)
+                let durationDuration = Duration.seconds(validDurationInterval)
+                duration = durationDuration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
+                durationInterval = validDurationInterval
+            }
+
+            let goalInterval = topicWeek.topic.goal(for: interval.startDate)
+            let goal: String
+            if let goalDuration = goalInterval?.duration {
+                let duration = Duration.seconds(goalDuration)
+                goal = duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
+            } else {
+                goal = emptyInterval
+            }
+
+            let goalRatioSymbolName: String
+            if let durationInterval, let goalDuration = goalInterval?.duration {
+                let ratio = durationInterval / goalDuration
+                switch ratio {
+                case ...0: goalRatioSymbolName = "circle"
+                case 0 ..< 1: goalRatioSymbolName = "circle.bottomhalf.fill"
+                case 1...: goalRatioSymbolName = "circle.fill"
+                default: fatalError()
+                }
+            } else {
+                goalRatioSymbolName = "circle.dotted"
+            }
+
+            let day = WeekViewData.Day(
+                goalRatioSymbolName: goalRatioSymbolName,
+                dayTitle: dayTitle,
+                duration: duration,
+                goal: goal
+            )
+            return day
+        }
+        
         let viewData = WeekViewData(
             title: title,
             subtitle: subtitle,
             previousWeekDisabled: false, // TODO:
             nextWeekDisabled: false, // TODO:
-            days: topicWeek.week.weekDayIntervals.map { interval -> WeekViewData.Day in
-                let dayTitle = interval.startDate.formatted(.dateTime.month(.twoDigits).day(.twoDigits))
-
-                let emptyInterval = "--:--:--"
-
-                let durationInterval: TimeInterval?
-                let duration: String
-                if store.now < interval.startDate {
-                    duration = emptyInterval
-                    durationInterval = nil
-                } else if !topicWeek.topic.sessionsBefore(date: interval.startDate) {
-                    duration = emptyInterval
-                    durationInterval = nil
-                } else {
-                    let validDurationInterval = topicWeek.topic.totalIntervalBetween(start: interval.startDate, end: interval.endDate)
-                    let durationDuration = Duration.seconds(validDurationInterval)
-                    duration = durationDuration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
-                    durationInterval = validDurationInterval
-                }
-
-                let goalInterval = topicWeek.topic.goal(for: interval.startDate)
-                let goal: String
-                if let goalDuration = goalInterval?.duration {
-                    let duration = Duration.seconds(goalDuration)
-                    goal = duration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
-                } else {
-                    goal = emptyInterval
-                }
-
-                let goalRatioSymbolName: String
-                if let durationInterval, let goalDuration = goalInterval?.duration {
-                    let ratio = durationInterval / goalDuration
-                    switch ratio {
-                    case ...0: goalRatioSymbolName = "circle"
-                    case 0 ..< 1: goalRatioSymbolName = "circle.bottomhalf.fill"
-                    case 1...: goalRatioSymbolName = "circle.fill"
-                    default: fatalError()
-                    }
-                } else {
-                    goalRatioSymbolName = "circle.dotted"
-                }
-
-                let day = WeekViewData.Day(
-                    goalRatioSymbolName: goalRatioSymbolName,
-                    dayTitle: dayTitle,
-                    duration: duration,
-                    goal: goal
-                )
-                return day
-            }
+            days: days
         )
+        
         return viewData
     }
 
