@@ -228,6 +228,20 @@ extension Topic {
         let totalInterval = matchingTimeIntervals.reduce(0, +)
         return totalInterval
     }
+    
+    /// Are there any sessions before the specified (start) date?
+    /// Assumes `sessions` is sorted.
+    func sessionsBefore(date: Date) -> Bool {
+        if let earliestSession = sessions.first {
+            return earliestSession.start <= date
+        } else if let activeSessionStart {
+            // No recorded sessions, but an active session.
+            return activeSessionStart <= date
+        } else {
+            // No sessions recorded
+            return false
+        }
+    }
 
     /// Includes `activeSession` if there is one currently running and not yet complete.
     func sessionCountBetween(start: Date, end: Date) -> Int {

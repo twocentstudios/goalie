@@ -215,6 +215,9 @@ struct WeekScreen: View {
                 if store.now < interval.startDate {
                     duration = emptyInterval
                     durationInterval = nil
+                } else if !topicWeek.topic.sessionsBefore(date: interval.startDate) {
+                    duration = emptyInterval
+                    durationInterval = nil
                 } else {
                     let validDurationInterval = topicWeek.topic.totalIntervalBetween(start: interval.startDate, end: interval.endDate)
                     let durationDuration = Duration.seconds(validDurationInterval)
