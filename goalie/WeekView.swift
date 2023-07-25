@@ -202,6 +202,7 @@ struct WeekView: View {
                 }
             }
         }
+        .frame(minWidth: 244, maxWidth: 320)
     }
 }
 
