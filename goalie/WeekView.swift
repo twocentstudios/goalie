@@ -265,6 +265,7 @@ struct WeekView: View {
     let viewData: WeekViewData
     var previousWeekTapped: (() -> Void)?
     var nextWeekTapped: (() -> Void)?
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         VStack(spacing: 0) {
@@ -321,6 +322,14 @@ struct WeekView: View {
                             .foregroundColor(Color.tertiaryLabel)
                             .monospaced()
                     }
+                }
+            }
+        }
+        .padding()
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") {
+                    dismiss()
                 }
             }
         }
