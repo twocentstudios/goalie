@@ -28,20 +28,14 @@ final class WeekStore: ObservableObject {
     }
 
     func previousWeekTapped() {
-        guard let newWeek = topicWeek.week.previousWeek(calendar: calendar) else {
-            assertionFailure("Previous week has no entries")
-            return
-        }
+        guard let newWeek = topicWeek.week.previousWeek(calendar: calendar) else { assertionFailure("Unexpected calendar math error"); return }
         var newTopicWeek = topicWeek
         newTopicWeek.week = newWeek
         topicWeek = newTopicWeek
     }
 
     func nextWeekTapped() {
-        guard let newWeek = topicWeek.week.nextWeek(calendar: calendar) else {
-            assertionFailure("Next week has no entries")
-            return
-        }
+        guard let newWeek = topicWeek.week.nextWeek(calendar: calendar) else { assertionFailure("Unexpected calendar math error"); return }
         var newTopicWeek = topicWeek
         newTopicWeek.week = newWeek
         topicWeek = newTopicWeek
