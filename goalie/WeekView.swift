@@ -59,6 +59,7 @@ struct WeekViewData {
 
 extension WeekViewData {
     init(topicWeek: TopicWeek, now: Date, locale: Locale) {
+        // TODO: `formatted` presumably uses system calendar/locale/timezone directly instead of via dependency
         title = "Week " + topicWeek.week.firstMoment.formatted(.dateTime.week(.defaultDigits))
         subtitle = topicWeek.week.range.formatted(.interval.year().month(.abbreviated).day().locale(locale))
         previousWeekDisabled = false // TODO:
