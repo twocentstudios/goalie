@@ -118,13 +118,19 @@ extension WeekViewData {
 
 struct WeekScreen: View {
     @ObservedObject var store: WeekStore
+    @Environment(\.dismiss) private var dismiss
 
     private var viewData: WeekViewData {
         .init(topicWeek: store.topicWeek, now: store.now, locale: store.locale)
     }
 
     var body: some View {
-        WeekView(viewData: viewData, previousWeekTapped: store.previousWeekTapped, nextWeekTapped: store.nextWeekTapped)
+        WeekView(
+            viewData: viewData,
+            previousWeekTapped: store.previousWeekTapped,
+            nextWeekTapped: store.nextWeekTapped,
+            dismissTapped: dismiss.callAsFunction
+        )
     }
 }
 
@@ -132,7 +138,7 @@ struct WeekView: View {
     let viewData: WeekViewData
     var previousWeekTapped: (() -> Void)?
     var nextWeekTapped: (() -> Void)?
-    @Environment(\.dismiss) private var dismiss
+    var dismissTapped: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -198,7 +204,7 @@ struct WeekView: View {
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Close") {
-                    dismiss()
+                    dismissTapped?()
                 }
             }
         }
