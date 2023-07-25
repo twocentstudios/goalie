@@ -129,7 +129,7 @@ final class TopicStore: ObservableObject {
     }
 
     func editSessionsButtonTapped() {}
-    
+
     func historyButtonTapped() {
         destination = .history(.init(topic: topic))
     }
@@ -242,8 +242,9 @@ struct TopicView: View {
                     .font(.body)
                     .foregroundColor(Color.label)
             }
+            .keyboardShortcut("y", modifiers: [.command])
             .frame(maxWidth: .infinity, alignment: .trailing)
-
+            
             TimelineView(.animation(minimumInterval: 1, paused: viewData.isTimerPaused)) { timeline in
                 Text(viewData.timerTitle(startOfDay: store.startOfToday, now: timeline.date))
                     .monospacedDigit()
@@ -294,6 +295,7 @@ struct TopicView: View {
                         }
                 }
                 .buttonStyle(.plain)
+                .keyboardShortcut(.return, modifiers: [.command])
 
                 // Previews times out without this lol
                 if false {}
@@ -381,8 +383,8 @@ struct TopicView: View {
         }
         .sheet(
             unwrapping: $store.destination,
-            case: /TopicStore.Destination.history)
-        { $weekStore in
+            case: /TopicStore.Destination.history
+        ) { $weekStore in
             WeekScreen(store: weekStore)
         }
     }

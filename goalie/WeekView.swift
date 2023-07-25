@@ -207,6 +207,7 @@ struct WeekView: View {
                 Button("Close") {
                     dismissTapped?()
                 }
+                .keyboardShortcut("y", modifiers: [.command])
             }
         }
         .frame(minWidth: 244, maxWidth: 320)
