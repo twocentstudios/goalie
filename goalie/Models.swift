@@ -131,15 +131,11 @@ extension Topic {
     }
 
     /// Assumes `from` sessions are sorted.
+    /// If `start` > `end`, then no results will be returned.
     static func sessionsBetween(start: Date, end: Date, from sessions: IdentifiedArrayOf<Session>) -> IdentifiedArrayOf<Session> {
-        guard start <= end else {
-            assertionFailure("start is not before end\n\(start)\n\(end)")
-            return []
-        }
+        guard start <= end else { return [] }
         var matchingSessions: IdentifiedArrayOf<Session> = []
         for session in sessions.reversed() {
-            // TODO: new day trigger crashes here with an assertion failure
-            // Probable cause is that ClosedRange requires lowerBound <= upperBound
             if (start ... end).contains(session.start) || (start ... end).contains(session.end) {
                 matchingSessions.append(session)
             } else if !matchingSessions.isEmpty {
