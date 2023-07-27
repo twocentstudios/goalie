@@ -67,12 +67,7 @@ final class TopicStore: ObservableObject {
     }
 
     func addGoalButtonTapped(_ newGoal: TimeInterval?) {
-        if topic.currentGoal?.duration == newGoal {
-            // goal hasn't changed, do nothing
-            return
-        }
-
-        topic.goals.append(.init(id: uuid(), start: calendar.startOfDay(for: now), duration: newGoal))
+        topic.addGoal(newID: uuid(), newGoal: newGoal, startOfToday: calendar.startOfDay(for: now))
     }
 
     func cancelCurrentSessionButtonTapped() {

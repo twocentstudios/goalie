@@ -5,7 +5,7 @@ struct Topic: Equatable, Identifiable, Codable {
     let id: UUID
     var activeSessionStart: Date? // non-nil when a session is active
     var sessions: IdentifiedArrayOf<Session> // assume sorted past to future
-    var goals: IdentifiedArrayOf<Goal> // assume sorted past to future
+    var goals: IdentifiedArrayOf<Goal> // assume sorted past to future, no two goals on the same day
 }
 
 struct Session: Equatable, Identifiable, Codable {
@@ -23,7 +23,7 @@ struct Session: Equatable, Identifiable, Codable {
 
 struct Goal: Equatable, Identifiable, Codable {
     let id: UUID
-    let start: Date // always normalized to the start of a day
+    let start: Date // always normalized to the start of a day (this has known issues with time zone changing)
     let duration: TimeInterval? // nil intentionally unsets a goal, always > 0
 
     init(id: UUID, start: Date, duration: TimeInterval?) {
@@ -65,6 +65,20 @@ extension Topic {
         // NEXT: currently, only one hardcoded topic is supported. In the future, this should load the last opened topic ID from UserDefaults.
         let onlyTopicId = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
         return Topic(id: onlyTopicId, activeSessionStart: nil, sessions: .init(), goals: .init())
+    }
+    
+    mutating func addGoal(newID: UUID, newGoal: TimeInterval?, startOfToday: Date) {
+        if currentGoal?.duration == newGoal {
+            // Goal duration hasn't changed, do nothing
+            return
+        }
+        
+        // Only allow one goal per day
+        if let existingGoalToday = goals.first(where: { $0.start == startOfToday }) {
+            goals.remove(existingGoalToday)
+        }
+        
+        goals.append(.init(id: newID, start: startOfToday, duration: newGoal))
     }
 
     var currentGoal: Goal? {
