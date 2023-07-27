@@ -116,14 +116,8 @@ final class TopicStore: ObservableObject {
         }
     }
 
-    func editSessionsButtonTapped() {}
-
     func historyButtonTapped() {
         destination = .history(.init(topic: topic))
-    }
-
-    func debugResetTopic() {
-        topic = Topic.new
     }
 }
 
@@ -237,10 +231,6 @@ struct TopicView: View {
                 Text(viewData.timerTitle(startOfDay: store.startOfToday, now: timeline.date))
                     .monospacedDigit()
                     .font(.largeTitle)
-                    .onTapGesture(count: 10) {
-                        // TODO: debug only
-                        store.debugResetTopic()
-                    }
 
                 Spacer().frame(height: 2)
 
