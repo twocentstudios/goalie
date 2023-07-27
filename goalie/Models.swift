@@ -80,7 +80,9 @@ extension Topic {
     /// If day D is today, `end` is assumed to be `now`.
     func totalIntervalBetween(start: Date, end: Date) -> TimeInterval {
         let activeInterval: TimeInterval
-        if let sessionStart = activeSessionStart {
+        if let sessionStart = activeSessionStart,
+           (start ... end).contains(sessionStart)
+        {
             activeInterval = end.timeIntervalSince(sessionStart)
         } else {
             activeInterval = 0
@@ -105,6 +107,7 @@ extension Topic {
         }
 
         let totalInterval = matchingTimeIntervals.reduce(0, +)
+        assert(totalInterval >= 0, "Expected interval to be positive")
         return totalInterval
     }
 

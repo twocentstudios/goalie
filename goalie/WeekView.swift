@@ -72,13 +72,16 @@ extension WeekViewData {
             let durationInterval: TimeInterval?
             let duration: String
             if now < interval.startDate {
+                // Interval is in the future
                 duration = emptyInterval
                 durationInterval = nil
             } else if !topicWeek.topic.sessionsBefore(date: interval.startDate) {
+                // Interval exists before any sessions
                 duration = emptyInterval
                 durationInterval = nil
             } else {
-                let validDurationInterval = topicWeek.topic.totalIntervalBetween(start: interval.startDate, end: interval.endDate)
+                let validatedEnd = min(now, interval.endDate)
+                let validDurationInterval = topicWeek.topic.totalIntervalBetween(start: interval.startDate, end: validatedEnd)
                 let durationDuration = Duration.seconds(validDurationInterval)
                 duration = durationDuration.formatted(.time(pattern: .hourMinuteSecond(padHourToLength: 2, fractionalSecondsLength: 0, roundFractionalSeconds: .up)))
                 durationInterval = validDurationInterval
