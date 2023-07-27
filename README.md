@@ -1,6 +1,6 @@
 # Goalie
 
-Goalie is a bespoke time tracking app for macOS. It supports macOS Ventura 13.4+.
+Goalie is a bespoke time tracking app for macOS. It supports macOS Ventura 13.3+.
 
 I created Goalie for myself to track my daily Japanese language studying.
 
