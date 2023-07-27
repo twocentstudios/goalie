@@ -36,7 +36,6 @@ final class RootStore: ObservableObject {
     @Published var topicStoreState: StoreState<TopicStore> = .initialized
     @Dependency(\.goaliePersistenceClient) var persistenceClient
 
-    @MainActor
     func task() async {
         await loadTopic()
     }
