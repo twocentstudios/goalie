@@ -18,7 +18,7 @@ struct RootView: View {
                         .foregroundColor(.red)
                         .multilineTextAlignment(.center)
                     Button("Retry") {
-                        store.retry()
+                        Task { await store.retry() }
                     }
                 }
                 .padding()
@@ -38,15 +38,14 @@ final class RootStore: ObservableObject {
 
     @MainActor
     func task() async {
-        loadTopic()
+        await loadTopic()
     }
 
-    func retry() {
-        loadTopic()
+    func retry() async {
+        await loadTopic()
     }
 
-    // TODO: how to make this async?
-    private func loadTopic() {
+    @MainActor private func loadTopic() async {
         let save: ((Topic) -> Void) = { [persistenceClient] t in
             do {
                 try persistenceClient.writeTopic(t)
@@ -58,7 +57,8 @@ final class RootStore: ObservableObject {
         guard let nextState = topicStoreState.stateByLoading else { return }
         topicStoreState = nextState
         do {
-            guard let topic = try persistenceClient.readTopic(Topic.new.id) else { throw CocoaError(.fileReadNoSuchFile) }
+            async let maybeTopic = Task { try persistenceClient.readTopic(Topic.new.id) }.value
+            guard let topic = try await maybeTopic else { throw CocoaError(.fileReadNoSuchFile) }
             let topicStore = TopicStore(topic: topic, save: save)
             topicStoreState = .loaded(topicStore)
         } catch CocoaError.fileReadNoSuchFile {
