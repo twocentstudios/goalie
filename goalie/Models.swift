@@ -67,6 +67,17 @@ extension Topic {
         return Topic(id: onlyTopicId, activeSessionStart: nil, sessions: .init(), goals: .init())
     }
     
+    mutating func toggleActive(newSessionID: UUID, now: Date) {
+        if let start = activeSessionStart {
+            assert(start <= now, "Session start should be before end")
+            let newSession = Session(id: newSessionID, start: start, end: now)
+            activeSessionStart = nil
+            sessions.append(newSession)
+        } else {
+            activeSessionStart = now
+        }
+    }
+    
     mutating func addGoal(newID: UUID, newGoal: TimeInterval?, startOfToday: Date) {
         if currentGoal?.duration == newGoal {
             // Goal duration hasn't changed, do nothing

@@ -53,13 +53,7 @@ final class TopicStore: ObservableObject {
     }
 
     func startStopButtonTapped() {
-        if let start = topic.activeSessionStart {
-            let newSession = Session(id: uuid(), start: start, end: now)
-            topic.activeSessionStart = nil
-            topic.sessions.append(newSession)
-        } else {
-            topic.activeSessionStart = now
-        }
+        topic.toggleActive(newSessionID: uuid(), now: now)
     }
 
     func showGoalAddButtonTapped() {
