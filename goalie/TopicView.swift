@@ -370,6 +370,6 @@ struct TopicView: View {
 
 struct TopicView_Previews: PreviewProvider {
     static var previews: some View {
-        TopicView(store: .init(topic: .init(id: .init(), activeSessionStart: .now, sessions: .init(uniqueElements: [.init(id: .init(), start: .now.addingTimeInterval(-100), end: .now.addingTimeInterval(-20))]), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
+        TopicView(store: .init(topic: .init(id: .init(), activeSessionStart: .now, sessions: .init(uniqueElements: [.init(id: .init(), start: .now.addingTimeInterval(-100), end: .now.addingTimeInterval(-20))!]), goals: .init(uniqueElements: [.init(id: .init(), start: .distantPast, duration: 5)])), save: { _ in }))
     }
 }

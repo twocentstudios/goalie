@@ -13,8 +13,8 @@ struct Session: Equatable, Identifiable, Codable {
     let start: Date
     let end: Date
 
-    init(id: UUID, start: Date, end: Date) {
-        // TODO: check start > end
+    init?(id: UUID, start: Date, end: Date) {
+        guard start < end else { return nil }
         self.id = id
         self.start = start
         self.end = end
@@ -66,29 +66,31 @@ extension Topic {
         let onlyTopicId = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
         return Topic(id: onlyTopicId, activeSessionStart: nil, sessions: .init(), goals: .init())
     }
-    
+
     mutating func toggleActive(newSessionID: UUID, now: Date) {
         if let start = activeSessionStart {
-            assert(start <= now, "Session start should be before end")
-            let newSession = Session(id: newSessionID, start: start, end: now)
+            guard let newSession = Session(id: newSessionID, start: start, end: now) else {
+                assertionFailure("Error creating new session:\nStart: \(start)\nEnd: \(now)")
+                return
+            }
             activeSessionStart = nil
             sessions.append(newSession)
         } else {
             activeSessionStart = now
         }
     }
-    
+
     mutating func addGoal(newID: UUID, newGoal: TimeInterval?, startOfToday: Date) {
         if currentGoal?.duration == newGoal {
             // Goal duration hasn't changed, do nothing
             return
         }
-        
+
         // Only allow one goal per day
         if let existingGoalToday = goals.first(where: { $0.start == startOfToday }) {
             goals.remove(existingGoalToday)
         }
-        
+
         goals.append(.init(id: newID, start: startOfToday, duration: newGoal))
     }
 
