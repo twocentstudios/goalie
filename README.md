@@ -6,7 +6,7 @@ Goalie is a bespoke time tracking app for macOS. It supports macOS Ventura 13.3+
 
 I created Goalie for myself to track my daily Japanese language studying.
 
-[Download the latest version from GitHub](/releases)
+[Download the latest version from GitHub](https://github.com/twocentstudios/goalie/releases)
 
 Today view|Today view (expanded)|Set a goal|History
 -|-|-|-
@@ -30,7 +30,7 @@ Today view|Today view (expanded)|Set a goal|History
 - There may be localization issues.
 - The history view should use a graph.
 - Proper macOS menu items should be available.
-- There's no auto-update mechanism available yet. Please download new release manually from the [releases](/releases) page.
+- There's no auto-update mechanism available yet. Please download new release manually from the [releases](https://github.com/twocentstudios/goalie/releases) page.
 
 ## Brief notes about the implementation
 
