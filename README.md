@@ -1,6 +1,6 @@
-![App Icon](/goalie/Assets.xcassets/AppIcon.appiconset/512.png)
-
 # Goalie
+
+![App Icon](/goalie/Assets.xcassets/AppIcon.appiconset/256.png)
 
 Goalie is a bespoke time tracking app for macOS. It supports macOS Ventura 13.3+.
 
