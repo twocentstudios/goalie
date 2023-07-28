@@ -1,5 +1,4 @@
-![App Icon](/goalie/goalie/Assets.xcassets/AppIcon.appiconset
-/512.png) 
+![App Icon](/goalie/goalie/Assets.xcassets/AppIcon.appiconset/512.png)
 
 # Goalie
 
