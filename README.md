@@ -1,3 +1,5 @@
+![App Icon](TODO) 
+
 # Goalie
 
 Goalie is a bespoke time tracking app for macOS. It supports macOS Ventura 13.3+.
@@ -19,7 +21,7 @@ Today view|Today view (expanded)|Set a goal|History
 
 ## Disclaimers/limitations/improvements
 
-- I don't intended it to be a full-featured time tracking app for every purpose. 
+- I don't intended the app to be a full-featured time tracking app for every purpose. 
 - The app hasn't been thoroughly QA tested, integration tested, or unit tested.
 - You can only track one _topic_.
 - It's a single window app (intentionally not a MenuBarExtra).
@@ -27,6 +29,7 @@ Today view|Today view (expanded)|Set a goal|History
 - Using non-Gregorian calendars may cause issues.
 - There may be localization issues.
 - The history view should use a graph.
+- Proper macOS menu items should be available.
 
 ## Brief notes about the implementation
 
