@@ -1,4 +1,5 @@
-![App Icon](TODO) 
+![App Icon](/goalie/goalie/Assets.xcassets/AppIcon.appiconset
+/512.png) 
 
 # Goalie
 
@@ -9,8 +10,8 @@ I created Goalie for myself to track my daily Japanese language studying.
 [Download the latest version from GitHub](TODO)
 
 Today view|Today view (expanded)|Set a goal|History
--|-|-
-![Today](/extra/main.png)|![Today](/extra/main-expanded.png)|![Set goal](/extra/set-goal.png)|[History](/extra/history.png)
+-|-|-|-
+![Today](/extra/main.png)|![Today](/extra/main-expanded.png)|![Set goal](/extra/set-goal.png)|![History](/extra/history.png)
 
 ## Features
 
