@@ -1,6 +1,7 @@
 import Combine
 import CustomDump
 import Dependencies
+import DependenciesAdditions
 import SwiftUI
 import SwiftUINavigation
 import SystemColors
@@ -10,6 +11,7 @@ final class TopicStore: ObservableObject {
     @Dependency(\.uuid) var uuid
     @Dependency(\.calendar) var calendar
     @Dependency(\.mainRunLoop) var mainRunLoop
+    @Dependency(\.notificationCenter) var notificationCenter
 
     @Published var topic: Topic {
         didSet {
@@ -33,7 +35,7 @@ final class TopicStore: ObservableObject {
     }
 
     private var save: (Topic) -> Void
-    private var timerCancellable: Cancellable?
+    private var cancellables: Set<AnyCancellable> = []
 
     init(topic: Topic, save: @escaping ((Topic) -> Void)) {
         self.topic = topic
@@ -41,14 +43,24 @@ final class TopicStore: ObservableObject {
         startOfToday = calendar.startOfDay(for: now)
 
         let approximateOneDayInterval: TimeInterval = 60 * 60 * 24
-        timerCancellable = mainRunLoop.schedule(
-            after: .init(calendar.startOfDay(for: now.addingTimeInterval(approximateOneDayInterval))),
-            interval: .seconds(approximateOneDayInterval),
-            tolerance: .seconds(1)
-        ) { [weak self] in
-            guard let self else { return }
-            self.startOfToday = calendar.startOfDay(for: self.now)
-        }
+        mainRunLoop
+            .schedule(
+                after: .init(calendar.startOfDay(for: now.addingTimeInterval(approximateOneDayInterval))),
+                interval: .seconds(approximateOneDayInterval),
+                tolerance: .seconds(1)
+            ) { [weak self] in
+                guard let self else { return }
+                self.startOfToday = calendar.startOfDay(for: self.now)
+            }
+            .store(in: &cancellables)
+
+        notificationCenter.publisher(for: NSApplication.didBecomeActiveNotification)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.startOfToday = calendar.startOfDay(for: self.now)
+                print(self.startOfToday!)
+            }
+            .store(in: &cancellables)
     }
 
     func startStopButtonTapped() {
@@ -226,7 +238,7 @@ struct TopicView: View {
             }
             .keyboardShortcut("y", modifiers: [.command])
             .frame(maxWidth: .infinity, alignment: .trailing)
-            
+
             TimelineView(.animation(minimumInterval: 1, paused: viewData.isTimerPaused)) { timeline in
                 Text(viewData.timerTitle(startOfDay: store.startOfToday, now: timeline.date))
                     .monospacedDigit()
